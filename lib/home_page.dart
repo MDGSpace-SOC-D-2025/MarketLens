@@ -1,44 +1,68 @@
 import 'package:flutter/material.dart';
-import 'widgets/mei_gauge.dart';
-
+import 'package:marketlens/widgets/mei_gauge.dart';
 
 class HomePage extends StatelessWidget {
+
   const HomePage({super.key});
+
+  String getEmotion(int mei_value){
+    if (mei_value<=40) {
+      return "Fear 😟";
+    }
+    if (mei_value<=60) {
+      return "Neutral 😐";
+    }
+    else {
+      return "Greed 😄";
+    }
+  }
+
+  String describeEmotion(int mei_value){
+    if (mei_value<=40) {
+      return "Market participants are risk-averse. Caution is advised.";
+    }
+    if (mei_value<=60) {
+      return "Market sentiment is balanced with no strong bias.";
+    }
+    else {
+      return "Optimism dominates the market. Risk appetite is high.";
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
+    const int mei_value=72;
+
     return Scaffold(
+      
       appBar: AppBar(
-        title: const Text(
-          "MarketLens",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-        ),
+        title: Text("MarketLens", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 24,),
-            MEIGauge(value: 72),
-            const SizedBox(height: 20),
-            const Text(
-              "Latest Headlines",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ListView(
-                children: const [
-                  ListTile(title: Text("Stocks rally as markets recover globally")),
-                  ListTile(title: Text("Tech sector shows mixed signals")),
-                  ListTile(title: Text("Oil prices fall amid global tensions")),
-                ],
+            MEIGauge(value: mei_value,),
+            const SizedBox(height: 24,),
+            Center(
+              child: Text(
+                getEmotion(mei_value), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
+            const SizedBox(height: 8,),
+            Center(
+              child: Text(
+                describeEmotion(mei_value), style: TextStyle(fontSize: 14, color: Colors.grey ),
+              ),
+            ),
+                                  
           ],
         ),
-      ),
+      
+    
+
     );
   }
 }

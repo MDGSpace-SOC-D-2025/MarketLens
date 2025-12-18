@@ -6,18 +6,20 @@ class MEIGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      height: 180,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border:Border.all(
-          color: Colors.blue,
-          width: 12,
+    return  Center(
+      child: Container(
+          width: 180,
+          height: 180,
+          child: Center(child: Text("$value%", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),)),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.blue,
+              width: 12,                                  
+            ),
+          ),
         ),
-
-      ),
-      child: Center(child: Text("$value%", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),)),
     );
+    
   }
 }

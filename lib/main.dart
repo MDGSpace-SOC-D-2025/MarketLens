@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:marketlens/home_page.dart';
-import 'widgets/mei_gauge.dart';
+import 'package:marketlens/home_page.dart';   
+import 'package:marketlens/widgets/mei_gauge.dart';
 
 
 void main() {
@@ -14,10 +14,8 @@ class MarketLensApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'MarketLens',
-      home: const HomePage(),
+      theme: ThemeData.dark(),
+      home: HomePage(),
     );
   }
 }
-
-
