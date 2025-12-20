@@ -10,7 +10,7 @@ class MEIGauge extends StatefulWidget {
 }
 
 class _MEIGaugeState extends State<MEIGauge> with SingleTickerProviderStateMixin {
-  late AnimationController controller;
+  static late AnimationController controller;
   late Animation<int> animation;
 
   @override
@@ -18,9 +18,8 @@ class _MEIGaugeState extends State<MEIGauge> with SingleTickerProviderStateMixin
     super.initState();
     controller=AnimationController(vsync: this, duration: Duration(milliseconds: 2000));
   
-  animation=IntTween(begin: 0, end: widget.value).animate(CurvedAnimation(parent: controller, curve: Curves.easeOutCubic));
-  
-  controller.forward();
+     
+    controller.forward();
   }
 
   @override
@@ -43,6 +42,9 @@ class _MEIGaugeState extends State<MEIGauge> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    animation=IntTween(begin: 0, end: widget.value).animate(CurvedAnimation(parent: controller, curve: Curves.linear));
+    controller.reset();
+    controller.forward();   
 
     return  Center(
       child: AnimatedBuilder(

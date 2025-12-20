@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
 
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+    static int mei_value=52;
+    static int prev_mei_value=72;
+    late Color trendColor;
 
   String getEmotion(int mei_value){
     if (mei_value<=40) {
@@ -28,13 +38,39 @@ class HomePage extends StatelessWidget {
       return "Optimism dominates the market. Risk appetite is high.";
     }
   }
-  
+
+  String marketTrend(){
+    if (mei_value > prev_mei_value) {
+      trendColor=Colors.green;
+      return "↑ Increasing";
+      
+
+    }
+    else if (mei_value < prev_mei_value){
+     trendColor=Colors.red;
+     return "↓ Decreasing";
+    
+    }
+    else{
+       trendColor=Colors.yellow;
+      return "→ Stable";
+
+    }
+  }
+
+  void meiUpdate(){
+     prev_mei_value=mei_value;
+     mei_value=mei_value+3;
+     
+    setState(() {
+             
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    const int mei_value=55;
-
-    return Scaffold(
+      return Scaffold(
       
       appBar: AppBar(
         title: Text("MarketLens", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
@@ -57,12 +93,19 @@ class HomePage extends StatelessWidget {
                 describeEmotion(mei_value), style: TextStyle(fontSize: 14, color: Colors.grey ),
               ),
             ),
-                                  
+            const SizedBox(height: 16,),
+            Text(
+              marketTrend(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: trendColor
+            )),
+            const SizedBox(height: 24,),
+            ElevatedButton(onPressed: () {
+                meiUpdate();
+                
+              
+            }, 
+            child: Text("Stimulate MEI Update"))                                  
           ],
         ),
-      
-    
-
     );
   }
 }
