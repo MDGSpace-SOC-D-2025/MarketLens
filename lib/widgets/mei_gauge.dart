@@ -10,7 +10,7 @@ class MEIGauge extends StatefulWidget {
 }
 
 class _MEIGaugeState extends State<MEIGauge> with SingleTickerProviderStateMixin {
-  static late AnimationController controller;
+  late AnimationController controller;
   late Animation<int> animation;
 
   @override

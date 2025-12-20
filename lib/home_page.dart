@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
+import 'dart:async';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatefulWidget { 
 
   const HomePage({super.key});
 
@@ -11,9 +13,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-    static int mei_value=52;
-    static int prev_mei_value=72;
-    late Color trendColor;
+    late MEIService meiService;
+    late int mei_value;
+    late int prev_mei_value;
+    late Color trendColor=Colors.cyanAccent;
+
 
   String getEmotion(int mei_value){
     if (mei_value<=40) {
@@ -58,18 +62,31 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void meiUpdate(){
-     prev_mei_value=mei_value;
-     mei_value=mei_value+3;
-     
+void startAutoUpdate() {
+  Timer.periodic(const Duration(seconds: 5), (timer) {
     setState(() {
-             
+      prev_mei_value = mei_value;
+      mei_value = meiService.getNextValue();
     });
+  });
+}
 
+  @override
+  void initState(){
+    super.initState();
+    meiService=MEIService();
+    
+    mei_value=meiService.getCurrentValue(); 
+
+    prev_mei_value=mei_value;   
+    startAutoUpdate();
   }
+
 
   @override
   Widget build(BuildContext context) {
+
+
       return Scaffold(
       
       appBar: AppBar(
@@ -98,12 +115,7 @@ class _HomePageState extends State<HomePage> {
               marketTrend(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: trendColor
             )),
             const SizedBox(height: 24,),
-            ElevatedButton(onPressed: () {
-                meiUpdate();
-                
-              
-            }, 
-            child: Text("Stimulate MEI Update"))                                  
+                                
           ],
         ),
     );
