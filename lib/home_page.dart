@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
     late int mei_value;
     late int prev_mei_value;
     late Color trendColor=Colors.cyanAccent;
+    late Timer meiTimer;
 
 
   String getEmotion(int mei_value){
@@ -63,13 +64,15 @@ class _HomePageState extends State<HomePage> {
   }
 
 void startAutoUpdate() {
-  Timer.periodic(const Duration(seconds: 5), (timer) {
+  meiTimer=Timer.periodic(const Duration(seconds: 5), (timer) {
     setState(() {
       prev_mei_value = mei_value;
       mei_value = meiService.getNextValue();
     });
   });
 }
+
+ 
 
   @override
   void initState(){
@@ -80,6 +83,12 @@ void startAutoUpdate() {
 
     prev_mei_value=mei_value;   
     startAutoUpdate();
+  }
+
+   @override
+  void dispose(){
+    meiTimer.cancel();
+    super.dispose();
   }
 
 
