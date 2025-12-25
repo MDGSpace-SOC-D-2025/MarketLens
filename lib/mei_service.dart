@@ -6,10 +6,13 @@ class MEIService {
   Future <MEIData> fetchJSON() async {
     final response= await http.get(Uri.parse("http://192.168.1.5:8000/mei"));
     
-      final data = jsonDecode(response.body);
-      return MEIData.json_to_dart_obj(data);
+    final data = jsonDecode(response.body);
+    return MEIData.json_to_dart_obj(data);
     
   }
-
-
+  Future <StockMEIData> fetchJSON_StockMEIData(String code) async {
+    final response = await http.get(Uri.parse("http://192.168.1.5:8000/stock/$code"));
+    final data = jsonDecode(response.body);
+    return StockMEIData.json_to_dart_obj(data);
+  }
 }

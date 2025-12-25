@@ -17,8 +17,11 @@ class _HomePageState extends State<HomePage> {
     late int mei_value;
     late String trend;
     
-    late Color trendColor=Colors.cyanAccent;
+    late Color trendColor;
     late Timer meiTimer;
+
+    late String stock_code;
+    late List<dynamic> stock_headlines;
 
 
   String getEmotion(int mei_value){
@@ -45,14 +48,40 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Color? getTrendColor (){
+    if (trend=="Strongly Bearish") {
+      trendColor=const Color.fromARGB(255, 223, 16, 2);
+      return trendColor;
+    }
+    if (trend=="Bearish") {
+      trendColor=Colors.redAccent;
+      return trendColor;
+    }
+    if (trend=="Uncertain/Neutral") {
+      trendColor=Colors.yellowAccent;
+      return trendColor;
+    }
+    if (trend=="Bullish") {
+      trendColor=Colors.lightGreenAccent;
+      return trendColor;
+    }
+    if (trend=="Strongly Bullish") {
+      trendColor=const Color.fromARGB(255, 11, 238, 19);
+      return trendColor;
+    }
+    
+    
+  }
+
   
 
 void startAutoUpdate() async {
   meiTimer=Timer.periodic(const Duration(seconds: 5), (timer) async {
-    final data1=await meiService.fetchJSON();
+    final data1=await meiService.fetchJSON_StockMEIData(stock_code);
     setState(() {
       mei_value=data1.value;
       trend=data1.trend;
+      stock_headlines=data1.headlines;
     });
   });
 }
@@ -68,6 +97,10 @@ void startAutoUpdate() async {
     mei_value=0; 
 
     trend='--NA--'; 
+
+    stock_code="AAPL";
+
+    stock_headlines=[];
 
     startAutoUpdate();
   }
@@ -108,9 +141,9 @@ void startAutoUpdate() async {
             ),
             const SizedBox(height: 16,),
             Text(
-              trend, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: trendColor
+              trend, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: getTrendColor()
             )),
-            const SizedBox(height: 24,),
+            const SizedBox(height: 24,),                        
                                 
           ],
         ),
