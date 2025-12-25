@@ -15,7 +15,8 @@ class _HomePageState extends State<HomePage> {
 
     late MEIService meiService;
     late int mei_value;
-    late int prev_mei_value;
+    late String trend;
+    
     late Color trendColor=Colors.cyanAccent;
     late Timer meiTimer;
 
@@ -44,30 +45,14 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  String marketTrend(){
-    if (mei_value > prev_mei_value) {
-      trendColor=Colors.green;
-      return "↑ Increasing";
-      
+  
 
-    }
-    else if (mei_value < prev_mei_value){
-     trendColor=Colors.red;
-     return "↓ Decreasing";
-    
-    }
-    else{
-       trendColor=Colors.yellow;
-      return "→ Stable";
-
-    }
-  }
-
-void startAutoUpdate() {
-  meiTimer=Timer.periodic(const Duration(seconds: 5), (timer) {
+void startAutoUpdate() async {
+  meiTimer=Timer.periodic(const Duration(seconds: 5), (timer) async {
+    final data1=await meiService.fetchJSON();
     setState(() {
-      prev_mei_value = mei_value;
-      mei_value = meiService.getNextValue();
+      mei_value=data1.value;
+      trend=data1.trend;
     });
   });
 }
@@ -77,11 +62,13 @@ void startAutoUpdate() {
   @override
   void initState(){
     super.initState();
+
     meiService=MEIService();
     
-    mei_value=meiService.getCurrentValue(); 
+    mei_value=0; 
 
-    prev_mei_value=mei_value;   
+    trend='--NA--'; 
+
     startAutoUpdate();
   }
 
@@ -121,7 +108,7 @@ void startAutoUpdate() {
             ),
             const SizedBox(height: 16,),
             Text(
-              marketTrend(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: trendColor
+              trend, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: trendColor
             )),
             const SizedBox(height: 24,),
                                 

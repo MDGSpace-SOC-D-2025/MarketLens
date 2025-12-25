@@ -1,17 +1,15 @@
-import 'dart:math';
-//Will later be replaced by backend data
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../mei_model.dart';
+
 class MEIService {
-  int _currentvalue=72;
-  final Random _random=Random();
-
-  int getNextValue(){
-    int change=_random.nextInt(7)-3;
-    _currentvalue=(_currentvalue+change).clamp(0, 100);
-    return _currentvalue;
-
+  Future <MEIData> fetchJSON() async {
+    final response= await http.get(Uri.parse("http://192.168.1.5:8000/mei"));
+    
+      final data = jsonDecode(response.body);
+      return MEIData.json_to_dart_obj(data);
+    
   }
 
-  int getCurrentValue() {
-    return _currentvalue;
-  }
+
 }

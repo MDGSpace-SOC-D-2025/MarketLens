@@ -1,4 +1,4 @@
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+'''from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -23,3 +23,4 @@ average_sentiment = sum(compounds) / len(compounds)
 mei = sentiment_to_mei(average_sentiment)
 
 print("\n📊 MARKET EMOTION INDEX (MEI):", mei)
+'''
