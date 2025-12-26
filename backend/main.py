@@ -1,5 +1,6 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
+from cache import get_cache, set_cache
 import datetime
 app=FastAPI()
 
@@ -55,6 +56,14 @@ def get_stock_sentiment(code:str):
     if code not in STOCK_HEADLINES:
         return {'error':'Unknown stock: not traceable'}
     
+    result=get_cache(code)
+
+    if result:
+        return result
+    
+    print("📈 MEI CALCULATING FOR STOCK CODE", code)
+
+    
     headlines=STOCK_HEADLINES[code]
     global mei
     compound_score=0
@@ -73,13 +82,15 @@ def get_stock_sentiment(code:str):
         trend="Bullish"
     elif mei<=100 and mei>80:
         trend="Strongly Bullish "
-
-    return {
+    
+    result={
         "code":code,
         "mei":mei,
         "trend":trend,
-        "headlines":headlines
+        "headlines":headlines        
     }
+    set_cache(code, result)
+    return result
 
 
 

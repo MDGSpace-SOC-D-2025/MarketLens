@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
@@ -22,6 +24,8 @@ class _HomePageState extends State<HomePage> {
 
     late String stock_code;
     late List<dynamic> stock_headlines;
+
+    final List<String> availableStocks=['AAPL', 'TSLA', 'NIFTY'];
 
 
   String getEmotion(int mei_value){
@@ -122,10 +126,30 @@ void startAutoUpdate() async {
         title: Text("MarketLens", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
         centerTitle: true,
       ),
+      
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 24,),
+            const SizedBox(height: 8),
+            Row(children: [
+              Text("Stocks:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+              const SizedBox(width: 12,),
+              DropdownButton<String>(
+                value: stock_code,
+                items: availableStocks.map((code){
+                  return DropdownMenuItem<String>(
+                    value: code,
+                    child: Text(code)  
+                  );                
+                }).toList(), 
+                onChanged: (newvalue){
+                  setState(() {
+                    stock_code=newvalue!;
+                    stock_headlines=[];
+                  });
+                })
+            ],),
+
             MEIGauge(value: mei_value,),
             const SizedBox(height: 24,),
             Center(
@@ -143,7 +167,27 @@ void startAutoUpdate() async {
             Text(
               trend, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: getTrendColor()
             )),
-            const SizedBox(height: 24,),                        
+            const SizedBox(height: 24,),       
+
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text("LATEST  HEADLINES  📰 📢❗️", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+
+            const SizedBox(height: 24,),
+
+            Expanded(
+              child: ListView.builder(
+                itemCount: stock_headlines.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Icon(Icons.article_outlined),
+                    title: Text(stock_headlines[index]),
+                  );
+                },
+              ),
+            ),
+                             
                                 
           ],
         ),
