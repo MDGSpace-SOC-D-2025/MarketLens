@@ -23,5 +23,90 @@ def getMEIHistory(code: str):
     else:
         return None
         
-
+class AnalyzeHistoricalTrend:
+    def __init__(self, code:str, history:list):
+        self.code=code
+        self.history=history
     
+    def sentiment_trend(self):
+        if len(self.history)<2:
+            return {
+                'change':'--NA--',
+                'direction':'Unknown',                
+            }
+        first=self.history[0]['mei']
+        latest=self.history[-1]['mei']
+        change=latest-first
+
+        if change>0:
+            return {
+                'change':change,
+                'direction':'rising',                
+            }
+        if change<0:
+            return {
+                'change':change,
+                'direction':'falling',
+            }
+        if change==0:
+            return {
+                'change':change,
+                'direction':'flat',                
+            }
+    def sentiment_momentum_score(self):
+        lookback_window=5
+
+        if len(self.history) <= lookback_window:
+            return {
+                "value": 0,
+                "strength": "insufficient data"
+            }
+
+
+        latest=self.history[-1]['mei']
+        mei_n_points_ago=self.history[-lookback_window]['mei']
+        momentum=latest-mei_n_points_ago
+
+        if momentum > 5:
+            strength = "strong"
+        elif momentum > 0:
+            strength = "weak"
+        elif momentum < -5:
+            strength = "strong bearish"
+        elif momentum < 0:
+            strength = "weak bearish"
+        else:
+            strength = "neutral"
+
+        return {
+            "value": momentum,
+            "strength": strength,                       
+        }
+    
+    def sentimetal_volatility_indicator(self):
+        if len(self.history) < 3:
+            return {
+                "value": 0,
+                "level": "insufficient data"
+            }
+        changes = []
+
+        for i in range(1, len(self.history)):
+            diff = abs(self.history[i]["mei"] - self.history[i-1]["mei"])
+            changes.append(diff)
+
+        volatility = sum(changes)/len(changes)
+
+        if volatility > 7:
+            level = "high"
+        elif volatility > 3:
+            level = "medium"
+        else:
+            level = "low"
+
+        return {
+            "value": round(volatility, 4),
+            "level": level
+        }
+
+        

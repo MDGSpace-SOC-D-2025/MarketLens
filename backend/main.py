@@ -2,7 +2,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
 
 from cache import get_cache, set_cache
-from history import addtoMEIHistory, getMEIHistory
+from history import addtoMEIHistory, getMEIHistory, AnalyzeHistoricalTrend
 import datetime
 app=FastAPI()
 
@@ -99,5 +99,21 @@ def stock_mei_history(code:str):
         'history': getMEIHistory(code)
     }
 
+@app.get("/stock/historical_trend/{code}")
+def stock_mei_historical_trend(code:str):
+    a=AnalyzeHistoricalTrend(code, getMEIHistory(code))
+    SentimentalTrend=a.sentiment_trend()
+    SentimentalMomentumScore=a.sentiment_momentum_score()
+    SentimentalVolatilityIndicator=a.sentimetal_volatility_indicator()
+
+    return {
+        'Trend':SentimentalTrend,
+        'Momentum Score':SentimentalMomentumScore,
+        'Volatility Indicator': SentimentalVolatilityIndicator
+    }
+
+
+    
+    
 
 
