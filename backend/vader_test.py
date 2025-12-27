@@ -22,5 +22,5 @@ compounds = [analyzer.polarity_scores(h)["compound"] for h in headlines]
 average_sentiment = sum(compounds) / len(compounds)
 mei = sentiment_to_mei(average_sentiment)
 
-print("\n📊 MARKET EMOTION INDEX (MEI):", mei)
+print("\nMARKET EMOTION INDEX (MEI):", mei)
 '''

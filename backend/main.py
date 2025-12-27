@@ -1,6 +1,8 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
+
 from cache import get_cache, set_cache
+from history import addtoMEIHistory, getMEIHistory
 import datetime
 app=FastAPI()
 
@@ -61,9 +63,6 @@ def get_stock_sentiment(code:str):
     if result:
         return result
     
-    print("📈 MEI CALCULATING FOR STOCK CODE", code)
-
-    
     headlines=STOCK_HEADLINES[code]
     global mei
     compound_score=0
@@ -89,8 +88,16 @@ def get_stock_sentiment(code:str):
         "trend":trend,
         "headlines":headlines        
     }
+    addtoMEIHistory(code, result)
     set_cache(code, result)
     return result
+
+@app.get("/stock/history/{code}")
+def stock_mei_history(code:str):
+    return {
+        'code':code,
+        'history': getMEIHistory(code)
+    }
 
 
 
