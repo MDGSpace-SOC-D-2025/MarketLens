@@ -5,6 +5,9 @@ import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
 import 'dart:async';
 
+import 'package:marketlens/widgets/mei_line_chart.dart';
+
+
 class HomePage extends StatefulWidget { 
 
   const HomePage({super.key});
@@ -24,6 +27,9 @@ class _HomePageState extends State<HomePage> {
 
     late String stock_code;
     late List<dynamic> stock_headlines;
+
+    List<int> meiHistory = []; 
+
 
     final List<String> availableStocks=['AAPL', 'TSLA', 'NIFTY'];
 
@@ -82,10 +88,15 @@ class _HomePageState extends State<HomePage> {
 void startAutoUpdate() async {
   meiTimer=Timer.periodic(const Duration(seconds: 5), (timer) async {
     final data1=await meiService.fetchJSON_StockMEIData(stock_code);
+    final history_mei_values = await meiService.fetchMEIHistory(stock_code);
+
     setState(() {
       mei_value=data1.value;
       trend=data1.trend;
       stock_headlines=data1.headlines;
+
+      meiHistory=history_mei_values;
+      
     });
   });
 }
@@ -152,6 +163,8 @@ void startAutoUpdate() async {
 
             MEIGauge(value: mei_value,),
             const SizedBox(height: 24,),
+            MeiLineChart(values: meiHistory),
+
             Center(
               child: Text(
                 getEmotion(mei_value), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
