@@ -4,8 +4,9 @@ import 'package:fl_chart/fl_chart.dart';
 class MeiLineChart extends StatelessWidget {
 
   final List <int> values;
+  final Color linecolor;
 
-  const MeiLineChart({super.key, required this.values});
+  const MeiLineChart({super.key, required this.values, required this.linecolor});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class MeiLineChart extends StatelessWidget {
               isCurved: true,
               barWidth: 3,
               dotData: FlDotData(show: true),
-              color: Colors.lightBlue,
+              color:linecolor,
             )
           ]
         )

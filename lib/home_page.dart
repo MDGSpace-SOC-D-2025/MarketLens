@@ -28,6 +28,13 @@ class _HomePageState extends State<HomePage> {
     late String stock_code;
     late List<dynamic> stock_headlines;
 
+    String trendDirection='Unknown';
+    int MomentumScore=0;
+    String MomentumStrength='Unknown';
+    String volatilityLevel='Unknown';
+
+    late Color chartcolor;
+
     List<int> meiHistory = []; 
 
 
@@ -83,12 +90,27 @@ class _HomePageState extends State<HomePage> {
     
   }
 
+  Color getChartcolor(){
+    if (trendDirection == '📈 rising') {
+      chartcolor = Colors.green;
+      return chartcolor;
+  } else if (trendDirection == '📉 falling') {
+      chartcolor = Colors.red;
+      return chartcolor;
+  } else {
+      chartcolor = Colors.grey;
+      return chartcolor;
+  }
+  }
+
   
 
 void startAutoUpdate() async {
-  meiTimer=Timer.periodic(const Duration(seconds: 5), (timer) async {
+  meiTimer=Timer.periodic(const Duration(seconds: 15), (timer) async {
     final data1=await meiService.fetchJSON_StockMEIData(stock_code);
     final history_mei_values = await meiService.fetchMEIHistory(stock_code);
+    final trendData= await meiService.fetchMEItrend(stock_code);
+
 
     setState(() {
       mei_value=data1.value;
@@ -96,7 +118,12 @@ void startAutoUpdate() async {
       stock_headlines=data1.headlines;
 
       meiHistory=history_mei_values;
-      
+
+      trendDirection=trendData['Trend']['direction'];
+      MomentumScore=trendData['Momentum Score']['value'];
+      MomentumStrength=trendData['Momentum Score']['strength'];
+      volatilityLevel=trendData['Volatility Indicator']['level'];
+
     });
   });
 }
@@ -130,7 +157,6 @@ void startAutoUpdate() async {
   @override
   Widget build(BuildContext context) {
 
-
       return Scaffold(
       
       appBar: AppBar(
@@ -138,72 +164,124 @@ void startAutoUpdate() async {
         centerTitle: true,
       ),
       
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            Row(children: [
-              Text("Stocks:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-              const SizedBox(width: 12,),
-              DropdownButton<String>(
-                value: stock_code,
-                items: availableStocks.map((code){
-                  return DropdownMenuItem<String>(
-                    value: code,
-                    child: Text(code)  
-                  );                
-                }).toList(), 
-                onChanged: (newvalue){
-                  setState(() {
-                    stock_code=newvalue!;
-                    stock_headlines=[];
-                  });
-                })
-            ],),
+      body:  SafeArea(
+        child: Column(              
+              children: [               
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(children: [
+                    Text("Stocks:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                    const SizedBox(width: 12,),
+                    DropdownButton<String>(
+                      value: stock_code,
+                      items: availableStocks.map((code){
+                        return DropdownMenuItem<String>(
+                          value: code,
+                          child: Text(code)  
+                        );                
+                      }).toList(), 
+                      onChanged: (newvalue){
+                        setState(() {
+                          stock_code=newvalue!;
+                          stock_headlines=[];
+                        });
+                      },)
+                  ],),
+                ),
+          
+                Expanded(
+                  child: SingleChildScrollView(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              MEIGauge(value: mei_value),
 
-            MEIGauge(value: mei_value,),
-            const SizedBox(height: 24,),
-            MeiLineChart(values: meiHistory),
+              const SizedBox(height: 24),
 
-            Center(
-              child: Text(
-                getEmotion(mei_value), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // FIXED HEIGHT
+              SizedBox(
+                height: 220,
+                child: MeiLineChart(
+                  values: meiHistory,
+                  linecolor: getChartcolor(),
+                ),
               ),
-            ),
-            const SizedBox(height: 8,),
-            Center(
-              child: Text(
-                describeEmotion(mei_value), style: TextStyle(fontSize: 14, color: Colors.grey ),
+
+              const SizedBox(height: 16),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Text("Trend: $trendDirection"),
+                      Text("Momentum: $MomentumScore ($MomentumStrength)"),
+                      Text("Volatility: $volatilityLevel"),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 16,),
-            Text(
-              trend, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: getTrendColor()
-            )),
-            const SizedBox(height: 24,),       
 
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text("LATEST  HEADLINES  📰 📢❗️", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
+              Center(
+                child: Text(
+                  getEmotion(mei_value),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
 
-            const SizedBox(height: 24,),
+              const SizedBox(height: 8),
 
-            Expanded(
-              child: ListView.builder(
+              Center(
+                child: Text(
+                  describeEmotion(mei_value),
+                  style: const TextStyle(
+                      fontSize: 14, color: Colors.grey),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  trend,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: getTrendColor(),
+                  ),
+                ),
+              ),
+
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "LATEST HEADLINES 📰 📢 🚨",
+                  style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: stock_headlines.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    leading: Icon(Icons.article_outlined),
+                    leading: const Icon(Icons.article_outlined),
                     title: Text(stock_headlines[index]),
                   );
                 },
               ),
-            ),
-                             
-                                
-          ],
+            ],
+          ),
         ),
+      ),
+    ],
+  ),
+),
+      
     );
   }
 }

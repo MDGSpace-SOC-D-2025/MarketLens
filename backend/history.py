@@ -31,7 +31,6 @@ class AnalyzeHistoricalTrend:
     def sentiment_trend(self):
         if len(self.history)<2:
             return {
-                'change':'--NA--',
                 'direction':'Unknown',                
             }
         first=self.history[0]['mei']
@@ -40,18 +39,15 @@ class AnalyzeHistoricalTrend:
 
         if change>0:
             return {
-                'change':change,
-                'direction':'rising',                
+                'direction':'📈 rising',                
             }
         if change<0:
             return {
-                'change':change,
-                'direction':'falling',
+                'direction':'📉 falling',
             }
         if change==0:
             return {
-                'change':change,
-                'direction':'flat',                
+                'direction':'➖ flat',                
             }
     def sentiment_momentum_score(self):
         lookback_window=5
@@ -85,8 +81,7 @@ class AnalyzeHistoricalTrend:
     
     def sentimetal_volatility_indicator(self):
         if len(self.history) < 3:
-            return {
-                "value": 0,
+            return {                
                 "level": "insufficient data"
             }
         changes = []
@@ -105,7 +100,6 @@ class AnalyzeHistoricalTrend:
             level = "low"
 
         return {
-            "value": round(volatility, 4),
             "level": level
         }
 
