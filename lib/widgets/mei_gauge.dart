@@ -16,7 +16,7 @@ class _MEIGaugeState extends State<MEIGauge> with SingleTickerProviderStateMixin
   @override
   void initState(){
     super.initState();
-    controller=AnimationController(vsync: this, duration: Duration(milliseconds: 2000));
+    controller=AnimationController(vsync: this, duration: Duration(milliseconds: 2500));
   
      
     controller.forward();

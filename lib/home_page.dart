@@ -214,7 +214,9 @@ void startAutoUpdate() async {
                         setState(() {
                           stock_code=newvalue!;
                           stock_headlines=[];
+                          
                         });
+                        fetchAlldata();
                       },)
                   ],),
                 ),
@@ -236,20 +238,36 @@ void startAutoUpdate() async {
                       child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                  MEIGauge(value: mei_value),
+                                  TweenAnimationBuilder<int>
+                                  (
+                                    tween: IntTween(begin: 0, end: mei_value),
+                                    duration: const Duration(milliseconds: 700),
+                                    builder: (context, value, _){
+                                      return MEIGauge(value: mei_value);
+                                    },
+                                    ),
                     
                                   const SizedBox(height: 24),
                     
                                   // FIXED HEIGHT
-                                  SizedBox(
-                                    height: 220,
-                                    child: MeiLineChart(
-                                    values: meiHistory,
-                                    linecolor: getChartcolor(),
+                                  AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 800),
+                                    child: SizedBox(
+                                      height: 220,
+                                      child: MeiLineChart(
+                                      values: meiHistory,
+                                      linecolor: getChartcolor(),
+                                      ),
                                     ),
                                   ),
                     
-                                  const SizedBox(height: 16),
+                                  //const SizedBox(height: 16),
+
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    child: Divider(thickness: 0.6),
+                                  ),
+
                     
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -266,9 +284,9 @@ void startAutoUpdate() async {
                     
                                   Center(
                                     child: Text(
-                        getEmotion(mei_value),
-                        style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                                    getEmotion(mei_value),
+                                    style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                                     ),
                                   ),
                     
@@ -276,9 +294,9 @@ void startAutoUpdate() async {
                     
                                   Center(
                                     child: Text(
-                        describeEmotion(mei_value),
-                        style: const TextStyle(
-                        fontSize: 14, color: Colors.grey),
+                                    describeEmotion(mei_value),
+                                    style: const TextStyle(
+                                    fontSize: 14, color: Colors.grey),
                                     ),
                                   ),
                     
@@ -299,9 +317,8 @@ void startAutoUpdate() async {
                                   const Padding(
                                     padding: EdgeInsets.all(16.0),
                                     child: Text(
-                    "LATEST HEADLINES 📰 📢 🚨",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  "LATEST HEADLINES 📰 📢 🚨",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                     ),
                                   ),
                     
