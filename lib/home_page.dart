@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:marketlens/mei_service.dart';
+import 'package:marketlens/utils/mei_utils.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
 import 'dart:async';
 
@@ -44,67 +45,7 @@ class _HomePageState extends State<HomePage> {
     final List<String> availableStocks=['AAPL', 'TSLA', 'NIFTY'];
 
 
-  String getEmotion(int mei_value){
-    if (mei_value<=40) {
-      return "Fear 😟";
-    }
-    if (mei_value<=60) {
-      return "Neutral 😐";
-    }
-    else {
-      return "Greed 😄";
-    }
-  }
-
-  String describeEmotion(int mei_value){
-    if (mei_value<=40) {
-      return "Market participants are risk-averse. Caution is advised.";
-    }
-    if (mei_value<=60) {
-      return "Market sentiment is balanced with no strong bias.";
-    }
-    else {
-      return "Optimism dominates the market. Risk appetite is high.";
-    }
-  }
-
-  Color? getTrendColor (){
-    if (trend=="Strongly Bearish") {
-      trendColor=const Color.fromARGB(255, 223, 16, 2);
-      return trendColor;
-    }
-    if (trend=="Bearish") {
-      trendColor=Colors.redAccent;
-      return trendColor;
-    }
-    if (trend=="Uncertain/Neutral") {
-      trendColor=Colors.yellowAccent;
-      return trendColor;
-    }
-    if (trend=="Bullish") {
-      trendColor=Colors.lightGreenAccent;
-      return trendColor;
-    }
-    if (trend=="Strongly Bullish") {
-      trendColor=const Color.fromARGB(255, 11, 238, 19);
-      return trendColor;
-    }
-    
-    
-  }
-
-  Color getChartcolor(){
-    if (trendDirection == '📈 rising') {
-      chartcolor = Colors.green;
-      return chartcolor;
-  } else if (trendDirection == '📉 falling') {
-      chartcolor = Colors.red;
-      return chartcolor;
-  } else {
-      chartcolor = Colors.grey;
-      return chartcolor;
-  }
-  }
+//
 
 
 Future<void> fetchAlldata() async {
@@ -256,7 +197,7 @@ void startAutoUpdate() async {
                                       height: 220,
                                       child: MeiLineChart(
                                       values: meiHistory,
-                                      linecolor: getChartcolor(),
+                                      linecolor: getChartcolor(trendDirection),
                                       ),
                                     ),
                                   ),
@@ -309,7 +250,7 @@ void startAutoUpdate() async {
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
-                                          color: getTrendColor(),
+                                          color: getTrendColor(trend),
                                         ),
                                     ),
                                   ),
