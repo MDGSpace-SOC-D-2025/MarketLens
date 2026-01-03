@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from cache import get_cache, set_cache
 from history import addtoMEIHistory, getMEIHistory, AnalyzeHistoricalTrend
+from alerts import generate_alert
 import datetime
 app=FastAPI()
 
@@ -81,12 +82,14 @@ def get_stock_sentiment(code:str):
         trend="Bullish"
     elif mei<=100 and mei>80:
         trend="Strongly Bullish "
+
     
     result={
         "code":code,
         "mei":mei,
         "trend":trend,
-        "headlines":headlines        
+        "headlines":headlines,
+              
     }
     addtoMEIHistory(code, result)
     set_cache(code, result)
@@ -101,15 +104,25 @@ def stock_mei_history(code:str):
 
 @app.get("/stock/historical_trend/{code}")
 def stock_mei_historical_trend(code:str):
+    history=getMEIHistory(code)
+    
     a=AnalyzeHistoricalTrend(code, getMEIHistory(code))
     SentimentalTrend=a.sentiment_trend()
     SentimentalMomentumScore=a.sentiment_momentum_score()
     SentimentalVolatilityIndicator=a.sentimetal_volatility_indicator()
 
+    if not history:
+        return {'error': 'No historical data available'}
+    
+    latest_mei=history[-1]['mei']
+
+    alert=generate_alert(latest_mei, SentimentalTrend['direction'], SentimentalMomentumScore['value'], SentimentalVolatilityIndicator['level'])
+
     return {
         'Trend':SentimentalTrend,
         'Momentum Score':SentimentalMomentumScore,
-        'Volatility Indicator': SentimentalVolatilityIndicator
+        'Volatility Indicator': SentimentalVolatilityIndicator,
+        'Alert': alert
     }
 
 

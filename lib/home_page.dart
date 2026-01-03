@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/utils/mei_utils.dart';
+import 'package:marketlens/widgets/alert_banner.dart';
+import 'package:marketlens/widgets/alert_card.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
 import 'dart:async';
 
@@ -39,7 +41,13 @@ class _HomePageState extends State<HomePage> {
     bool isloading=false;
     String? errorMessage;
 
+    String alertMessage = '';
+    String alertLevel = '';
+    String alertReason='';
+
     List<int> meiHistory = []; 
+
+
 
 
     final List<String> availableStocks=['AAPL', 'TSLA', 'NIFTY'];
@@ -75,6 +83,12 @@ Future<void> fetchAlldata() async {
       MomentumScore=trendData['Momentum Score']['value'];
       MomentumStrength=trendData['Momentum Score']['strength'];
       volatilityLevel=trendData['Volatility Indicator']['level'];
+
+      alertMessage=trendData['Alert']['message'];
+      alertLevel=trendData['Alert']['level'];
+      alertReason=trendData['Alert']['reason'];
+
+      
 
       isloading=false;
 
@@ -161,6 +175,14 @@ void startAutoUpdate() async {
                       },)
                   ],),
                 ),
+
+                if (alertLevel == 'critical')
+                  AlertBanner(message: alertMessage,)
+                else if (alertLevel=='warning')
+                  AlertCard(message: alertMessage, colorcard: Colors.orange.shade500)
+                else if (alertLevel=='info')
+                  AlertCard(message: alertMessage, colorcard: Colors.blue.shade500),
+                
           
                 Expanded(
                   child: isloading
