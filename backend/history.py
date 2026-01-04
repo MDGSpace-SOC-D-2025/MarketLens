@@ -4,6 +4,7 @@ MEIHistory={}  #{'code':[{mei:value, date:date},{mei:value, date:date},{mei:valu
 
 MEIHistory_maxEntires=20
 
+from trend_explain import explain_momentum, explain_trend, explain_volatility
 import datetime
 
 def addtoMEIHistory(code: str, result: dict):
@@ -31,23 +32,28 @@ class AnalyzeHistoricalTrend:
     def sentiment_trend(self):
         if len(self.history)<2:
             return {
-                'direction':'Unknown',                
+                'direction':'Unknown',
+                'explanation':'NA'                
             }
         first=self.history[0]['mei']
         latest=self.history[-1]['mei']
         change=latest-first
 
         if change>0:
+            
             return {
-                'direction':'📈 rising',                
+                'direction':'📈 rising',  
+                'explanation': explain_trend('📈 rising')           
             }
         if change<0:
             return {
                 'direction':'📉 falling',
+                'explanation': explain_trend('📉 falling')
             }
         if change==0:
             return {
-                'direction':'➖ flat',                
+                'direction':'➖ flat', 
+                'explanation': explain_trend('➖ flat')           
             }
     def sentiment_momentum_score(self):
         lookback_window=5
@@ -55,7 +61,8 @@ class AnalyzeHistoricalTrend:
         if len(self.history) <= lookback_window:
             return {
                 "value": 0,
-                "strength": "insufficient data"
+                "strength": "insufficient data",
+                'explanation':'NA'
             }
 
 
@@ -76,13 +83,15 @@ class AnalyzeHistoricalTrend:
 
         return {
             "value": momentum,
-            "strength": strength,                       
+            "strength": strength,       
+            'explanation':explain_momentum(momentum, lookback_window)                
         }
     
     def sentimetal_volatility_indicator(self):
         if len(self.history) < 3:
             return {                
-                "level": "insufficient data"
+                "level": "insufficient data",
+                'explanation':'NA'
             }
         changes = []
 
@@ -100,7 +109,8 @@ class AnalyzeHistoricalTrend:
             level = "low"
 
         return {
-            "level": level
+            "level": level,
+            'explanation':explain_volatility(level)
         }
 
         

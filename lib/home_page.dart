@@ -37,6 +37,10 @@ class _HomePageState extends State<HomePage> {
     String MomentumStrength='Unknown';
     String volatilityLevel='Unknown';
 
+    String Mom_explain='NA';
+    String Vol_explain='NA';
+    String Trend_explain='NA';
+
     late Color chartcolor;
 
     bool isloading=false;
@@ -89,6 +93,10 @@ Future<void> fetchAlldata() async {
       MomentumScore=trendData['Momentum Score']['value'];
       MomentumStrength=trendData['Momentum Score']['strength'];
       volatilityLevel=trendData['Volatility Indicator']['level'];
+
+      Trend_explain=trendData['Trend']['explanation'];
+      Mom_explain= trendData['Momentum Score']['explanation'];
+      Vol_explain=trendData['Volatility Indicator']['explanation'];
 
       alertMessage=trendData['Alert']['message'];
       alertLevel=trendData['Alert']['level'];
@@ -231,6 +239,11 @@ void startAutoUpdate() async {
                                     ),
                                   ),
 
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    child: Divider(thickness: 0.6),
+                                  ),
+
                                   if (alertMessage.isNotEmpty)
                                     AlertCard(
                                       level: alertLevel,
@@ -247,11 +260,7 @@ void startAutoUpdate() async {
                                       insightMessage: insightMessage, 
                                       insightType: insightType),
 
-
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 12),
-                                    child: Divider(thickness: 0.6),
-                                  ),
+                                                                       
 
                     
                                   Padding(
@@ -259,9 +268,9 @@ void startAutoUpdate() async {
                                     child: Center(
                                     child: Column(
                                       children: [
-                                        Text("Trend: $trendDirection"),
-                                        Text("Momentum: $MomentumScore ($MomentumStrength)"),
-                                        Text("Volatility: $volatilityLevel"),
+                                        Text(Trend_explain),
+                                        Text(Mom_explain),
+                                        Text(Vol_explain),
                                       ],
                                     ),
                                     ),

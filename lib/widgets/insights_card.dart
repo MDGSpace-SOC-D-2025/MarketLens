@@ -11,12 +11,12 @@ class InsightsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
           color: insightType == 'positive'
-              ? Colors.green.shade50
+              ? Colors.green.shade200
               : insightType == 'warning'
-                  ? Colors.orange.shade50
+                  ? Colors.orange.shade200
                   : insightType == 'danger'
-                      ? Colors.red.shade50
-                      : Colors.grey.shade100,
+                      ? Colors.red.shade200
+                      : Colors.grey.shade500,
           margin:  const EdgeInsets.all(16),
           child:  Padding(
             padding: const EdgeInsets.all(16),
