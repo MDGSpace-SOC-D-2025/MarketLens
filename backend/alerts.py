@@ -1,28 +1,48 @@
 def generate_alert(mei, trend, momentum, volatility):
-    reason = (
-    f"MEI is {mei}, momentum is {momentum}, "
-    f"and volatility is {volatility}"
-    )
-
-    factors={
-        'mei':mei,
-        'momentum':momentum,
-        'volatility':volatility
+    alert = {
+        "level": "LOW",
+        "title": "Market Stable",
+        "message": "",
+        "factors": []
     }
 
-    if mei <= 25:
-        return {"level": "critical", "message": "🚨 Extreme fear detected in the market", "reason":reason, "factors":factors}
+    # HIGH RISK CONDITIONS 
+    if trend == "📉 falling" and momentum['strength'] in ["strong bearish", "weak bearish"]:
+        alert["level"] = "HIGH"
+        alert["title"] = "Downside Risk Increasing"
+        alert["message"] = (
+            "Market momentum is weakening while trend is falling. "
+            "Risk of correction or sharp move is elevated."
+        )
 
-    if mei >= 80:
-        return {"level": "critical", "message": "🚨 Extreme greed — market overheating", "reason":reason, "factors":factors}
+    # MEDIUM RISK CONDITIONS 
+    elif momentum['strength'] == "weak bearish" or volatility == "high":
+        alert["level"] = "MEDIUM"
+        alert["title"] = "Market Entering Uncertainty"
+        alert["message"] = (
+            "Momentum is weakening or volatility is rising. "
+            "Market conditions may change soon."
+        )
 
-    if trend == "down" and volatility == "high":
-        return {"level": "critical", "message": "🚨 Panic risk: falling trend with high volatility", "reason":reason, "factors":factors}
+    # LOW RISK 
+    else:
+        alert["message"] = (
+            "Market trend and momentum are stable. "
+            "No immediate risk signals detected."
+        )
 
-    if 25 < mei <= 40:
-        return {"level": "warning", "message": "⚠️ Fear zone — investors are cautious", "reason":reason, "factors":factors}
+    # MEI CONTEXT (EXPLANATION, NOT DECISION) 
+    if mei >= 70:
+        alert["factors"].append("Sentiment is greedy")
+    elif mei <= 40:
+        alert["factors"].append("Sentiment is fearful")
+    else:
+        alert["factors"].append("Sentiment is neutral")
 
-    if 60 <= mei < 75:
-        return {"level": "warning", "message": "⚠️ Greed building — watch for reversals", "reason":reason, "factors":factors}
+    alert["factors"].extend([
+        f"Trend: {trend}",
+        f"Momentum: {momentum['value']} ({momentum['strength']})",
+        f"Volatility: {volatility}"
+    ])
 
-    return {"level": "info", "message": "ℹ️ Market sentiment stable", "reason":reason, "factors":factors}
+    return alert

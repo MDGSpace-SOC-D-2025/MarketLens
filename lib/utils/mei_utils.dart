@@ -4,7 +4,7 @@ String getEmotion(int mei_value){
   if (mei_value<=40) {
     return "Fear 😟";
   }
-  if (mei_value<=60) {
+  if (mei_value<=70) {
     return "Neutral 😐";
   }
   else {
@@ -16,7 +16,7 @@ String describeEmotion(int mei_value){
   if (mei_value<=40) {
     return "Market participants are risk-averse. Caution is advised.";
   }
-  if (mei_value<=60) {
+  if (mei_value<=70) {
     return "Market sentiment is balanced with no strong bias.";
   }
   else {

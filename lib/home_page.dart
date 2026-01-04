@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/utils/mei_utils.dart';
-import 'package:marketlens/widgets/alert_banner.dart';
+
 import 'package:marketlens/widgets/alert_card.dart';
+import 'package:marketlens/widgets/insights_card.dart';
 import 'package:marketlens/widgets/mei_gauge.dart';
 import 'dart:async';
 
@@ -43,7 +44,12 @@ class _HomePageState extends State<HomePage> {
 
     String alertMessage = '';
     String alertLevel = '';
-    String alertReason='';
+    String alertTitle='';
+    List<dynamic> alertFactors=[];
+
+    String insightTitle='';
+    String insightMessage='';
+    String insightType='';
 
     List<int> meiHistory = []; 
 
@@ -86,7 +92,12 @@ Future<void> fetchAlldata() async {
 
       alertMessage=trendData['Alert']['message'];
       alertLevel=trendData['Alert']['level'];
-      alertReason=trendData['Alert']['reason'];
+      alertTitle=trendData['Alert']['title'];
+      alertFactors=trendData['Alert']['factors'];
+
+      insightTitle=trendData['Insight']['title'];
+      insightMessage=trendData['Insight']['message'];
+      insightType=trendData['Insight']['type'];
 
       
 
@@ -176,12 +187,8 @@ void startAutoUpdate() async {
                   ],),
                 ),
 
-                if (alertLevel == 'critical')
-                  AlertBanner(message: alertMessage,)
-                else if (alertLevel=='warning')
-                  AlertCard(message: alertMessage, colorcard: Colors.orange.shade500)
-                else if (alertLevel=='info')
-                  AlertCard(message: alertMessage, colorcard: Colors.blue.shade500),
+                
+
                 
           
                 Expanded(
@@ -223,8 +230,23 @@ void startAutoUpdate() async {
                                       ),
                                     ),
                                   ),
+
+                                  if (alertMessage.isNotEmpty)
+                                    AlertCard(
+                                      level: alertLevel,
+                                      title: alertTitle,
+                                      message: alertMessage,
+                                      factors: alertFactors,
+                                    ),
                     
                                   //const SizedBox(height: 16),
+
+                                  if (insightTitle.isNotEmpty)
+                                    InsightsCard(
+                                      insightTitle: insightTitle, 
+                                      insightMessage: insightMessage, 
+                                      insightType: insightType),
+
 
                                   const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12),

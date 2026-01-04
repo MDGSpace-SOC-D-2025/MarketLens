@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from cache import get_cache, set_cache
 from history import addtoMEIHistory, getMEIHistory, AnalyzeHistoricalTrend
 from alerts import generate_alert
+from insights import generate_insight
 import datetime
 app=FastAPI()
 
@@ -116,13 +117,15 @@ def stock_mei_historical_trend(code:str):
     
     latest_mei=history[-1]['mei']
 
-    alert=generate_alert(latest_mei, SentimentalTrend['direction'], SentimentalMomentumScore['value'], SentimentalVolatilityIndicator['level'])
+    alert=generate_alert(latest_mei, SentimentalTrend['direction'], SentimentalMomentumScore, SentimentalVolatilityIndicator['level'])
+    insight=generate_insight(SentimentalTrend, SentimentalMomentumScore, SentimentalVolatilityIndicator)
 
     return {
         'Trend':SentimentalTrend,
         'Momentum Score':SentimentalMomentumScore,
         'Volatility Indicator': SentimentalVolatilityIndicator,
-        'Alert': alert
+        'Alert': alert,
+        'Insight':insight,
     }
 
 
