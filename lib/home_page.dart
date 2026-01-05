@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:marketlens/bot_page.dart';
 import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/utils/mei_utils.dart';
 
@@ -167,6 +168,20 @@ void startAutoUpdate() async {
         title: Text("MarketLens", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
         centerTitle: true,
       ),
+
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blueAccent,
+          child: const Icon(Icons.smart_toy_outlined),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AssistantPage(),
+              ),
+            );
+          },
+        ),
+
       
       body:  SafeArea(
         child: Column(              
