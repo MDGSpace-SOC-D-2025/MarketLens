@@ -5,6 +5,9 @@ from cache import get_cache, set_cache
 from history import addtoMEIHistory, getMEIHistory, AnalyzeHistoricalTrend
 from alerts import generate_alert
 from insights import generate_insight
+
+from assistant_chat import build_market_context, chat_response
+
 import datetime
 app=FastAPI()
 
@@ -121,12 +124,26 @@ def stock_mei_historical_trend(code:str):
     insight=generate_insight(SentimentalTrend, SentimentalMomentumScore, SentimentalVolatilityIndicator)
 
     return {
+        'code':code,
+        'MEI':latest_mei,
         'Trend':SentimentalTrend,
         'Momentum Score':SentimentalMomentumScore,
         'Volatility Indicator': SentimentalVolatilityIndicator,
         'Alert': alert,
         'Insight':insight,
     }
+
+@app.post('/assistant_chat')
+def assistant_chat(stock: str, query:str):
+    data= stock_mei_historical_trend(stock)
+
+    context=build_market_context(data)
+    response=chat_response(context, query)
+
+    return{
+        'response':response
+    }
+
 
 
     

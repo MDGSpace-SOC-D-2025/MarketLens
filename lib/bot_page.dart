@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:marketlens/bot_ask_anything.dart';
+import 'package:marketlens/mei_service.dart';
 
 class AssistantPage extends StatelessWidget {
   const AssistantPage({super.key});
@@ -20,9 +22,30 @@ class AssistantPage extends StatelessWidget {
               icon: Icons.trending_up,
               title: "Explain Market Trend",
               subtitle: "Why is the market behaving this way?",
-              onTap: () {
-                // Explain trend
-              },
+              
+                onTap: () async {
+                  final explanation = await MEIService().fetchMEItrend("AAPL");
+                  String Trend_explain=explanation['Trend']['explanation'];
+                  String Mom_explain= explanation['Momentum Score']['explanation'];
+                  String Vol_explain=explanation['Volatility Indicator']['explanation'];
+                  String final_explanation='$Trend_explain $Mom_explain $Vol_explain';
+
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text("Market Explanation"),
+      content: Text(final_explanation),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Got it"),
+        ),
+      ],
+    ),
+  );
+},
+// Explain trend
+              
             ),
 
             AssistantButton(
@@ -48,7 +71,12 @@ class AssistantPage extends StatelessWidget {
               title: "Ask Anything",
               subtitle: "Free-form market questions",
               onTap: () {
-                // Chatbot later
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatAssistantPage(stockCode: "AAPL"),
+                  ),
+                );
               },
             ),
           ],
