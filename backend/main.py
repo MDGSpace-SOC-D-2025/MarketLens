@@ -1,11 +1,6 @@
-from data_sources.news_service import fetch_headlines
+from data_sources.news_service import fetch_headlines, deduplicate_headlines_fuzzy, filter_relevant_headlines, weighted_sentiment, relevance_score
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
-
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 
 from cache import get_cache, set_cache
@@ -73,7 +68,9 @@ def get_stock_sentiment(code:str):
     if result:
         return result
 
-    headlines = fetch_headlines(code)
+    raw_headlines = fetch_headlines(code)
+    dedup_headlines=deduplicate_headlines_fuzzy(raw_headlines)
+    headlines=filter_relevant_headlines(dedup_headlines)
 
     #if code not in STOCK_HEADLINES:
        # return {'error':'Unknown stock: not traceable'}
@@ -84,13 +81,24 @@ def get_stock_sentiment(code:str):
         return result 
         '''
     
+    if not headlines:
+        return {
+            "code": code,
+            "mei": 'NA',
+            "trend": "Uncertain",
+            "headlines": ['NA']
+        }
+    
     #headlines=STOCK_HEADLINES[code]
     global mei
+    '''
     compound_score=0
     for headline in headlines:
         compound_score+=analyzer.polarity_scores(headline)["compound"]        
     #avg_compound=compound_score/len(STOCK_HEADLINES) ####
-    avg_compound=compound_score/len(headlines)
+    avg_compound=compound_score/len(headlines)'''
+
+    avg_compound=weighted_sentiment(headlines, analyzer)
     mei=int((avg_compound+1)*50)
 
     if mei<=25:
