@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marketlens/bot_ask_anything.dart';
+import 'package:marketlens/pages/bot_ask_anything.dart';
 import 'package:marketlens/mei_service.dart';
 
 class AssistantPage extends StatelessWidget {
