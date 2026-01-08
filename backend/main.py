@@ -1,5 +1,12 @@
+from data_sources.news_service import fetch_headlines
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 from cache import get_cache, set_cache
 from history import addtoMEIHistory, getMEIHistory, AnalyzeHistoricalTrend
@@ -12,7 +19,7 @@ import datetime
 app=FastAPI()
 
 analyzer=SentimentIntensityAnalyzer()
-
+'''
 STOCK_HEADLINES = {
     "AAPL": ["Apple shares rise after strong iPhone sales",
         "Apple faces regulatory pressure in EU",
@@ -25,11 +32,12 @@ STOCK_HEADLINES = {
     "NIFTY": ["Indian markets rally as inflation cools",
         "IT stocks drag Nifty lower",
         "Banking sector boosts market sentiment"]
-}
+}'''
+
 
 
 mei=0 
-
+'''
 @app.get("/mei")
 def getMEI():
     global mei
@@ -55,25 +63,34 @@ def getMEI():
         'trend':trend,
         'time': datetime.datetime.now().isoformat()    
     }
-
+'''
 @app.get("/stock/{code}")
 def get_stock_sentiment(code:str):
     code=code.upper()
 
-    if code not in STOCK_HEADLINES:
-        return {'error':'Unknown stock: not traceable'}
-    
     result=get_cache(code)
 
     if result:
         return result
+
+    headlines = fetch_headlines(code)
+
+    #if code not in STOCK_HEADLINES:
+       # return {'error':'Unknown stock: not traceable'}
+    '''
+    result=get_cache(code)
+
+    if result:
+        return result 
+        '''
     
-    headlines=STOCK_HEADLINES[code]
+    #headlines=STOCK_HEADLINES[code]
     global mei
     compound_score=0
     for headline in headlines:
         compound_score+=analyzer.polarity_scores(headline)["compound"]        
-    avg_compound=compound_score/len(STOCK_HEADLINES)
+    #avg_compound=compound_score/len(STOCK_HEADLINES) ####
+    avg_compound=compound_score/len(headlines)
     mei=int((avg_compound+1)*50)
 
     if mei<=25:
