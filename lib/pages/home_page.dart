@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:marketlens/market_state.dart';
 import 'package:marketlens/pages/assistant_page.dart';
 import 'package:marketlens/mei_service.dart';
 import 'package:marketlens/utils/mei_utils.dart';
@@ -11,19 +12,16 @@ import 'package:marketlens/widgets/mei_gauge.dart';
 import 'dart:async';
 
 import 'package:marketlens/widgets/mei_line_chart.dart';
+import 'package:marketlens/widgets/stock_search_delegate.dart';
+import 'package:provider/provider.dart';
 
+final List<String> stocks = ['AAPL', 'TSLA', 'NIFTY'];
 
-class HomePage extends StatefulWidget { 
+class HomePage extends StatelessWidget { 
 
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-    late MEIService meiService;
+    /*late MEIService meiService;
     late int mei_value;
     late String trend;
     
@@ -156,17 +154,49 @@ void startAutoUpdate() async {
   void dispose(){
     meiTimer.cancel();
     super.dispose();
-  }
+  }*/
 
-
+  
   @override
   Widget build(BuildContext context) {
+
+      final market = context.watch<MarketState>();
 
       return Scaffold(
       
       appBar: AppBar(
-        title: Text("MarketLens", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
+        title: Column( 
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("MarketLens", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),),
+            
+            Text(
+        context.watch<MarketState>().stockCode,
+        style: const TextStyle(
+          fontSize: 22,
+          color: Colors.grey,
+          letterSpacing: 1.2
+        ),
+      ),
+      
+          ],
+        ),
         centerTitle: true,
+         actions: [
+    IconButton(
+      icon: const Icon(Icons.search),
+      onPressed: () async {
+        final stock = await showSearch(
+          context: context,
+          delegate: StockSearchDelegate(),
+        );
+
+        if (stock != null && context.mounted) {
+          context.read<MarketState>().changeStock(stock.code);
+        }
+      },
+    ),
+  ],
       ),
       
       /*floatingActionButton: FloatingActionButton(
@@ -187,70 +217,73 @@ void startAutoUpdate() async {
       body:  SafeArea(
         child: Column(              
               children: [               
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(children: [
-                    Text("Stocks:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                    const SizedBox(width: 12,),
-                    DropdownButton<String>(
-                      value: stock_code,
-                      items: availableStocks.map((code){
-                        return DropdownMenuItem<String>(
-                          value: code,
-                          child: Text(code)  
-                        );                
-                      }).toList(), 
-                      onChanged: (newvalue){
-                        setState(() {
-                          stock_code=newvalue!;
-                          stock_headlines=[];
-                          
-                        });
-                        fetchAlldata();
-                      },)
-                  ],),
-                ),
+                /*Row(children: [
+                  Text("Stocks:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                  const SizedBox(width: 12,),
+                 /* DropdownButton<String>(
+                      value: market.stockCode,
+                      items: stocks.map((s) {
+                        return DropdownMenuItem(value: s, child: Text(s));
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          market.changeStock(val);
+                        }
+                      },
+                    )*/
+                
+                ],),*/
 
                 
 
                 
           
                 Expanded(
-                  child: isloading
+                  child: market.isLoading
       ? const Center(child: CircularProgressIndicator())
-      : errorMessage != null
+      : market.error != null
           ? Center(
               child: Text(
-                errorMessage!,
+                market.error!,
                 style: const TextStyle(color: Colors.red),
               ),
             )
           : RefreshIndicator(
-                    onRefresh: fetchAlldata,
+                    onRefresh: market.fetchAll,
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+                                          const SizedBox(height: 32),
+
+                                          
+
                                   TweenAnimationBuilder<int>
                                   (
-                                    tween: IntTween(begin: 0, end: mei_value),
+                                    tween: IntTween(begin: 0, end: market.meiValue),
                                     duration: const Duration(milliseconds: 700),
                                     builder: (context, value, _){
-                                      return MEIGauge(value: mei_value);
+                                      return MEIGauge(value: market.meiValue);
                                     },
                                     ),
                     
-                                  const SizedBox(height: 24),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    child: Divider(thickness: 0.6),
+                                  ),
                     
                                   // FIXED HEIGHT
                                   AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 800),
                                     child: SizedBox(
                                       height: 220,
-                                      child: MeiLineChart(
-                                      values: meiHistory,
-                                      linecolor: getChartcolor(trendDirection),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 16, left: 6),
+                                        child: MeiLineChart(
+                                        values: market.meiHistory,
+                                        linecolor: getChartcolor(market.trendDirection),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -260,41 +293,41 @@ void startAutoUpdate() async {
                                     child: Divider(thickness: 0.6),
                                   ),
 
-                                  if (alertMessage.isNotEmpty)
+                                  /*if (market.alertMessage.isNotEmpty)
                                     AlertCard(
-                                      level: alertLevel,
-                                      title: alertTitle,
-                                      message: alertMessage,
-                                      factors: alertFactors,
+                                      level: market.alertLevel,
+                                      title: market.alertTitle,
+                                      message: market.alertMessage,
+                                      factors: market.alertFactors,
                                     ),
                     
                                   //const SizedBox(height: 16),
 
-                                  if (insightTitle.isNotEmpty)
+                                  if (market.insightTitle.isNotEmpty)
                                     InsightsCard(
-                                      insightTitle: insightTitle, 
-                                      insightMessage: insightMessage, 
-                                      insightType: insightType),
+                                      insightTitle: market.insightTitle, 
+                                      insightMessage: market.insightMessage, 
+                                      insightType: market.insightType),*/
 
                                                                        
 
                     
-                                  Padding(
+                                  /*Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
                                     child: Column(
                                       children: [
-                                        Text(Trend_explain),
-                                        Text(Mom_explain),
+                                        Text(market.Trend_explain),
+                                        Text(market.Mom_explain),
                                         Text(Vol_explain),
                                       ],
                                     ),
                                     ),
-                                  ),
+                                  ),*/
                     
                                   Center(
                                     child: Text(
-                                    getEmotion(mei_value),
+                                    getEmotion(market.meiValue),
                                     style: const TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                                     ),
@@ -304,7 +337,7 @@ void startAutoUpdate() async {
                     
                                   Center(
                                     child: Text(
-                                    describeEmotion(mei_value),
+                                    describeEmotion(market.meiValue),
                                     style: const TextStyle(
                                     fontSize: 14, color: Colors.grey),
                                     ),
@@ -312,7 +345,7 @@ void startAutoUpdate() async {
                     
                                   const SizedBox(height: 16),
                     
-                                  Padding(
+                                  /*Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
                                         trend,
@@ -322,9 +355,9 @@ void startAutoUpdate() async {
                                           color: getTrendColor(trend),
                                         ),
                                     ),
-                                  ),
+                                  ),*/
                     
-                                  const Padding(
+                                  /*const Padding(
                                     padding: EdgeInsets.all(16.0),
                                     child: Text(
                                   "LATEST HEADLINES 📰 📢 🚨",
@@ -335,14 +368,14 @@ void startAutoUpdate() async {
                                   ListView.builder(
                                     shrinkWrap: true,
                                     physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: stock_headlines.length,
+                                    itemCount: market.headlines.length,
                                     itemBuilder: (context, index) {
                                     return ListTile(
                                       leading: const Icon(Icons.article_outlined),
-                                      title: Text(stock_headlines[index]),
+                                      title: Text(market.headlines[index]),
                                     );
                                     },
-                                  ),
+                                  ),*/
                                 ],
                               ),
                             ),

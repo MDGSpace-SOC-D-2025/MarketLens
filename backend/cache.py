@@ -1,7 +1,7 @@
 import time
 
 cache={}
-cache_ttl=1800  #seconds
+cache_ttl=900  #seconds
 
 def get_cache(code: str):
     data=cache.get(code)

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:marketlens/market_state.dart';
 import 'package:marketlens/pages/main_scaffold.dart';
 import 'package:marketlens/pages/home_page.dart';   
 import 'package:marketlens/widgets/mei_gauge.dart';
+import 'package:provider/provider.dart';
 
 
 void main() {
-  runApp(const MarketLensApp());
+  runApp(ChangeNotifierProvider(
+      create: (_) => MarketState()..initialize(),
+      child: const MarketLensApp(),
+    ));
 }
 
 class MarketLensApp extends StatelessWidget {

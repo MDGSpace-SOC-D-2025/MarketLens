@@ -29,3 +29,21 @@ class StockMEIData{
 
   }
 }
+
+
+/*class MEIPoint {
+  final DateTime timestamp;
+  final int value;
+
+  MEIPoint({
+    required this.timestamp,
+    required this.value,
+  });
+
+  factory MEIPoint.fromJson(Map<String, dynamic> json) {
+    return MEIPoint(
+      timestamp: DateTime.parse(json['timestamp']),
+      value: json['mei'],
+    );
+  }
+}*/

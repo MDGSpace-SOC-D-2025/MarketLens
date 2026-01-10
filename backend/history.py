@@ -2,7 +2,7 @@ MEIHistory={}  #{'code':[{mei:value, date:date},{mei:value, date:date},{mei:valu
                #Act like Queue, Front End --> Dequeue
                                 #Rear End --> Enqueue
 
-MEIHistory_maxEntires=20
+MEIHistory_maxEntires=40
 
 from trend_explain import explain_momentum, explain_trend, explain_volatility
 import datetime
