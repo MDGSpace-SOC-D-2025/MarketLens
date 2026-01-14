@@ -12,6 +12,7 @@ import 'package:marketlens/widgets/mei_gauge.dart';
 import 'dart:async';
 
 import 'package:marketlens/widgets/mei_line_chart.dart';
+import 'package:marketlens/widgets/mei_sparkline.dart';
 import 'package:marketlens/widgets/stock_search_delegate.dart';
 import 'package:provider/provider.dart';
 
@@ -161,6 +162,12 @@ void startAutoUpdate() async {
   Widget build(BuildContext context) {
 
       final market = context.watch<MarketState>();
+      final meiHistory = market.meiHistory;
+      final sparklineValues = meiHistory.length > 36
+        ? meiHistory.sublist(meiHistory.length - 36)
+        : meiHistory;
+
+
 
       return Scaffold(
       
@@ -267,6 +274,11 @@ void startAutoUpdate() async {
                                       return MEIGauge(value: market.meiValue);
                                     },
                                     ),
+
+                                    MeiSparkline(
+                                        values: sparklineValues,
+                                        color: Colors.greenAccent,
+                                      ),
                     
                                   const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -292,6 +304,8 @@ void startAutoUpdate() async {
                                     padding: EdgeInsets.symmetric(vertical: 12),
                                     child: Divider(thickness: 0.6),
                                   ),
+
+                                                                       
 
                                   /*if (market.alertMessage.isNotEmpty)
                                     AlertCard(
@@ -325,7 +339,7 @@ void startAutoUpdate() async {
                                     ),
                                   ),*/
                     
-                                  Center(
+                                 /* Center(
                                     child: Text(
                                     getEmotion(market.meiValue),
                                     style: const TextStyle(
@@ -343,7 +357,7 @@ void startAutoUpdate() async {
                                     ),
                                   ),
                     
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 16),*/
                     
                                   /*Padding(
                                     padding: const EdgeInsets.all(16.0),

@@ -65,22 +65,34 @@ class MarketState extends ChangeNotifier {
 
       meiHistory = history;
 
-      trendDirection = trendData['Trend']['direction'];
-      momentumScore = trendData['Momentum Score']['value'];
-      momentumStrength = trendData['Momentum Score']['strength'];
-      volatilityLevel = trendData['Volatility Indicator']['level'];
+      final trendMap = trendData['Trend'] ?? {};
+      final momentumMap = trendData['Momentum Score'] ?? {};
+      final volatilityMap = trendData['Volatility Indicator'] ?? {};
+      final alertMap = trendData['Alert'] ?? {};
+      final insightMap = trendData['Insight'] ?? {};
 
-      alertTitle = trendData['Alert']['title'];
-      alertMessage = trendData['Alert']['message'];
-      alertLevel = trendData['Alert']['level'];
-      alertFactors = trendData['Alert']['factors'];
+      trendDirection = trendMap['direction'] ?? 'Unknown';
 
-      insightTitle = trendData['Insight']['title'];
-      insightMessage = trendData['Insight']['message'];
-      insightType = trendData['Insight']['type'];
+      momentumScore = momentumMap['value'] ?? 0;
+      momentumStrength = momentumMap['strength'] ?? 'Unknown';
+
+      volatilityLevel = volatilityMap['level'] ?? 'Unknown';
+
+      alertTitle = alertMap['title'] ?? '';
+      alertMessage = alertMap['message'] ?? '';
+      alertLevel = alertMap['level'] ?? '';
+      alertFactors = alertMap['factors'] ?? [];
+
+      insightTitle = insightMap['title'] ?? '';
+      insightMessage = insightMap['message'] ?? '';
+      insightType = insightMap['type'] ?? '';
+
 
     } catch (e) {
+      //error = "Failed to fetch market data";
       error = "Failed to fetch market data";
+      debugPrint("FETCH ERROR: $e");
+      
     }
 
     isLoading = false;

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 
 from cache import get_cache, set_cache
-from history import addtoMEIHistory, getMEIHistory, AnalyzeHistoricalTrend
+from history import addtoMEIHistory, bootstrap_mei_history, getMEIHistory, AnalyzeHistoricalTrend
 from alerts import generate_alert
 from insights import generate_insight
 
@@ -84,9 +84,9 @@ def get_stock_sentiment(code:str):
     if not headlines:
         return {
             "code": code,
-            "mei": 'NA',
+            "mei": 50,
             "trend": "Uncertain",
-            "headlines": ['NA']
+            "headlines": ['No major market news found']
         }
     
     #headlines=STOCK_HEADLINES[code]
@@ -126,6 +126,7 @@ def get_stock_sentiment(code:str):
 
 @app.get("/stock/history/{code}")
 def stock_mei_history(code:str):
+    bootstrap_mei_history(code)
     return {
         'code':code,
         'history': getMEIHistory(code)
@@ -141,7 +142,35 @@ def stock_mei_historical_trend(code:str):
     SentimentalVolatilityIndicator=a.sentimetal_volatility_indicator()
 
     if not history:
-        return {'error': 'No historical data available'}
+        return {
+            'code': code,
+            'MEI': 50,
+            'Trend': {
+                'direction': 'Unknown',
+                'explanation': 'Insufficient data'
+            },
+            'Momentum Score': {
+                'value': 0,
+                'strength': 'insufficient data',
+                'explanation': 'NA'
+            },
+            'Volatility Indicator': {
+                'level': 'insufficient data',
+                'explanation': 'NA'
+            },
+            'Alert': {
+                'title': 'No alert',
+                'message': 'Not enough historical data',
+                'level': 'info',
+                'factors': []
+            },
+            'Insight': {
+                'title': 'No insight',
+                'message': 'Collecting more data',
+                'type': 'neutral'
+            }
+        }
+
     
     latest_mei=history[-1]['mei']
 

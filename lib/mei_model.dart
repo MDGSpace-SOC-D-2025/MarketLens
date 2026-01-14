@@ -23,27 +23,18 @@ class StockMEIData{
 
   StockMEIData({required this.code, required this.value, required this.trend, required this.headlines});
 
-  factory StockMEIData.json_to_dart_obj(Map<String, dynamic> json){
-    
-    return StockMEIData(code: json['code'], value: json['mei'], trend: json['trend'], headlines: json['headlines']);
+  factory StockMEIData.json_to_dart_obj(Map<String, dynamic> json) {
+  final dynamic meiRaw = json['mei'];
 
-  }
+  return StockMEIData(
+    code: json['code'],
+    value: meiRaw is int ? meiRaw : 50, // fallback
+    trend: json['trend'] ?? "Uncertain",
+    headlines: json['headlines'] ?? [],
+  );
+}
+
 }
 
 
-/*class MEIPoint {
-  final DateTime timestamp;
-  final int value;
 
-  MEIPoint({
-    required this.timestamp,
-    required this.value,
-  });
-
-  factory MEIPoint.fromJson(Map<String, dynamic> json) {
-    return MEIPoint(
-      timestamp: DateTime.parse(json['timestamp']),
-      value: json['mei'],
-    );
-  }
-}*/

@@ -4,25 +4,26 @@ MEIHistory={}  #{'code':[{mei:value, date:date},{mei:value, date:date},{mei:valu
 
 MEIHistory_maxEntires=40
 
+from mei_from_price import compute_mei_from_prices
 from trend_explain import explain_momentum, explain_trend, explain_volatility
-import datetime
+from datetime import datetime, timedelta
 
 def addtoMEIHistory(code: str, result: dict):
     if code in MEIHistory:
-        MEIHistory[code].append({'mei':result['mei'], 'timestamp': datetime.datetime.now()})
+        MEIHistory[code].append({'mei':result['mei'], 'timestamp': datetime.now()})
         if len(MEIHistory[code])>MEIHistory_maxEntires:
             MEIHistory[code].pop(0)
 
     if code not in MEIHistory:
         MEIHistory[code]=[]
-        MEIHistory[code].append({'mei':result['mei'], 'timestamp': datetime.datetime.now()})
+        MEIHistory[code].append({'mei':result['mei'], 'timestamp': datetime.now()})
 
 def getMEIHistory(code: str):
     
     if code in MEIHistory:
         return MEIHistory[code]
     else:
-        return None
+        return []
         
 class AnalyzeHistoricalTrend:
     def __init__(self, code:str, history:list):
@@ -113,4 +114,57 @@ class AnalyzeHistoricalTrend:
             'explanation':explain_volatility(level)
         }
 
-        
+import yfinance as yf
+
+
+def fetch_yahoo_history(code: str):
+    ticker = yf.Ticker(code)
+
+    df = ticker.history(period="1d", interval="1h")
+
+    if df.empty:
+        df = ticker.history(period="30d", interval="1d")
+
+    history = []
+    for ts, row in df.iterrows():
+        history.append({
+            "timestamp": ts.to_pydatetime(),
+            "price": float(row["Close"])
+        })
+
+    return history
+
+
+def bootstrap_mei_history(code: str):
+    if code in MEIHistory and len(MEIHistory[code]) >= 5:
+        return
+
+    if code not in MEIHistory:
+        MEIHistory[code] = []
+
+    raw = fetch_yahoo_history(code)
+    if not raw:
+        return
+
+    buckets = {}
+    for entry in raw:
+        bucket = entry["timestamp"].replace(
+            minute=0, second=0, microsecond=0
+        )
+        bucket -= timedelta(hours=bucket.hour % 2)
+        buckets.setdefault(bucket, []).append(entry["price"])
+
+    for ts in sorted(buckets.keys()):
+        prices = buckets[ts]
+        if len(prices) < 2:
+            continue
+
+        mei = int(round(compute_mei_from_prices(prices)))
+        MEIHistory[code].append({
+            "mei": mei,
+            "timestamp": ts
+        })
+
+        if len(MEIHistory[code]) > MEIHistory_maxEntires:
+            MEIHistory[code].pop(0)
+

@@ -4,33 +4,40 @@ import '../mei_model.dart';
 
 class MEIService {
   Future <MEIData> fetchJSON() async {
-    final response= await http.get(Uri.parse("http://10.57.155.11:8000/mei"));
+    final response= await http.get(Uri.parse("http://10.81.82.37:8000/mei"));
     
     final data = jsonDecode(response.body);
     return MEIData.json_to_dart_obj(data);
     
   }
   Future <StockMEIData> fetchJSON_StockMEIData(String code) async {
-    final response = await http.get(Uri.parse("http://10.57.155.11:8000/stock/$code"));
+    
+    final response = await http.get(Uri.parse("http://10.81.82.37:8000/stock/$code"));
+    print("STATUS CODE: ${response.statusCode}");
+    print("RAW BODY: ${response.body}");
+
     final data = jsonDecode(response.body);
     return StockMEIData.json_to_dart_obj(data);
   }
 
   Future<List<int>> fetchMEIHistory(String code) async {
-    final response = await http.get(Uri.parse("http://10.57.155.11:8000/stock/history/$code"));
+    final response = await http.get(Uri.parse("http://10.81.82.37:8000/stock/history/$code"));
     final data = jsonDecode(response.body);
     final List history= data['history'];
     final List<int> return_mei_values=[];
     
     for (int i=0; i<history.length;i++) {
-      return_mei_values.add(history[i]['mei']);
+      final rawMei = history[i]['mei'];
+      return_mei_values.add(rawMei is int ? rawMei : (rawMei as num).round()
+      );
+
     }
 
     return return_mei_values;
   }
 
   Future<Map<String, dynamic>> fetchMEItrend(String code) async {
-    final response= await http.get(Uri.parse("http://10.57.155.11:8000/stock/historical_trend/$code"));
+    final response= await http.get(Uri.parse("http://10.81.82.37:8000/stock/historical_trend/$code"));
     final data=jsonDecode(response.body);
     return data;
 
@@ -38,7 +45,7 @@ class MEIService {
 
   Future<String> sendAssistantQuery(String stock, String query) async {
   final response = await http.post(
-    Uri.parse("http://10.57.155.11:8000/assistant_chat"),
+    Uri.parse("http://10.81.82.37:8000/assistant_chat"),
     body: {
       "stock": stock,
       "query": query,
@@ -48,25 +55,5 @@ class MEIService {
   final data = jsonDecode(response.body);
   return data['response'];
   }
-
-  /*Future<List<MEIPoint>> fetchMEIHistoryRange(
-  String code,
-  String range, // "2h", "4h", "3d"
-) async {
-  final response = await http.get(
-    Uri.parse(
-      "http://10.57.155.11:8000/stock/history/$code?range=$range",
-    ),
-  );
-
-  final data = jsonDecode(response.body);
-  final List history = data['history'];
-
-  return history
-      .map((e) => MEIPoint.fromJson(e))
-      .toList();
-}*/
-
-
 
 }
