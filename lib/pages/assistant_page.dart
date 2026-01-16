@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:marketlens/pages/bot_ask_anything.dart';
-import 'package:marketlens/mei_service.dart';
 
 class AssistantPage extends StatelessWidget {
   const AssistantPage({super.key});
@@ -9,75 +8,89 @@ class AssistantPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Market Assistant 🤖"),
+        title: const Text("MarketLens Assistant "),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-
-            AssistantButton(
-              icon: Icons.trending_up,
-              title: "Explain Market Trend",
-              subtitle: "Why is the market behaving this way?",
-              
-                onTap: () async {
-                  final explanation = await MEIService().fetchMEItrend("AAPL");
-                  String Trend_explain=explanation['Trend']['explanation'];
-                  String Mom_explain= explanation['Momentum Score']['explanation'];
-                  String Vol_explain=explanation['Volatility Indicator']['explanation'];
-                  String final_explanation='$Trend_explain $Mom_explain $Vol_explain';
-
-  showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: const Text("Market Explanation"),
-      content: Text(final_explanation),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Got it"),
-        ),
-      ],
-    ),
-  );
-},
-// Explain trend
-              
-            ),
-
-            AssistantButton(
-              icon: Icons.flash_on,
-              title: "Momentum Breakdown",
-              subtitle: "Understand momentum & strength",
-              onTap: () {
-                // 
-              },
-            ),
-
-            AssistantButton(
-              icon: Icons.warning_amber_rounded,
-              title: "Risk & Alerts",
-              subtitle: "What risks should I know?",
-              onTap: () {
-                // 
-              },
-            ),
-
-            AssistantButton(
-              icon: Icons.chat_bubble_outline,
-              title: "Ask Anything",
-              subtitle: "Free-form market questions",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ChatAssistantPage(stockCode: "AAPL"),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [            
+            // HERO BOT CARD
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 121, 165, 241).withValues(alpha: .08),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Hi, I’m MarketLens ",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                );
-              },
+                  SizedBox(height: 12),
+                  Text(
+                    "I analyze market sentiment, trends, risks, and news to help you understand what’s really happening — in simple words.",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color.fromARGB(221, 255, 255, 255),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 28),
+
+            //  SUGGESTED PROMPTS
+            const Text(
+              "You can ask things like:",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            _PromptChip(text: "Why is sentiment falling today?"),
+            _PromptChip(text: "Is this stock risky right now?"),
+            _PromptChip(text: "Explain the MEI chart in simple terms"),
+            _PromptChip(text: "What should I watch out for today?"),
+
+            const Spacer(),
+
+            //  PRIMARY CTA
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: const Text(
+                  "Start Conversation",
+                  style: TextStyle(fontSize: 16),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const ChatAssistantPage(stockCode: "AAPL"),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -86,33 +99,29 @@ class AssistantPage extends StatelessWidget {
   }
 }
 
+///  Prompt Chip Widget
+class _PromptChip extends StatelessWidget {
+  final String text;
 
-class AssistantButton extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const AssistantButton({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+  const _PromptChip({required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 3,
-      child: ListTile(
-        leading: Icon(icon, size: 28, color: Colors.blueAccent),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          const Icon(Icons.lightbulb_outline,
+              size: 18, color: Colors.blueAccent),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-

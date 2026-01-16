@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:marketlens/pages/assistant_page.dart';
 import 'home_page.dart';
 import 'insights_page.dart';
 import 'news_page.dart';
-import 'assistant_page.dart';
+//import 'assistant_page.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});

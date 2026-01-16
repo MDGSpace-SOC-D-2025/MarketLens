@@ -1,7 +1,11 @@
+from stock_service import compute_stock_sentiment
+from market_snapshot import get_market_snapshot
 from data_sources.news_service import fetch_headlines, deduplicate_headlines_fuzzy, filter_relevant_headlines, weighted_sentiment, relevance_score
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
 
+from assistant_ai import ask_marketlens_ai, build_prompt
+from assistant_chat import build_market_context, chat_response
 
 from cache import get_cache, set_cache
 from history import addtoMEIHistory, bootstrap_mei_history, getMEIHistory, AnalyzeHistoricalTrend
@@ -61,68 +65,8 @@ def getMEI():
 '''
 @app.get("/stock/{code}")
 def get_stock_sentiment(code:str):
-    code=code.upper()
+    return compute_stock_sentiment(code)
 
-    result=get_cache(code)
-
-    if result:
-        return result
-
-    raw_headlines = fetch_headlines(code)
-    dedup_headlines=deduplicate_headlines_fuzzy(raw_headlines)
-    headlines=filter_relevant_headlines(dedup_headlines)
-
-    #if code not in STOCK_HEADLINES:
-       # return {'error':'Unknown stock: not traceable'}
-    '''
-    result=get_cache(code)
-
-    if result:
-        return result 
-        '''
-    
-    if not headlines:
-        return {
-            "code": code,
-            "mei": 50,
-            "trend": "Uncertain",
-            "headlines": ['No major market news found']
-        }
-    
-    #headlines=STOCK_HEADLINES[code]
-    global mei
-    '''
-    compound_score=0
-    for headline in headlines:
-        compound_score+=analyzer.polarity_scores(headline)["compound"]        
-    #avg_compound=compound_score/len(STOCK_HEADLINES) ####
-    avg_compound=compound_score/len(headlines)'''
-
-    avg_compound=weighted_sentiment(headlines, analyzer)
-    mei=int((avg_compound+1)*50)
-
-    if mei<=25:
-        trend="Strongly Bearish"
-    elif mei<=40 and mei>25:
-        trend="Bearish"
-    elif mei<=60 and mei>40:
-        trend="Uncertain/Neutral"
-    elif mei<=80 and mei>60:
-        trend="Bullish"
-    elif mei<=100 and mei>80:
-        trend="Strongly Bullish "
-
-    
-    result={
-        "code":code,
-        "mei":mei,
-        "trend":trend,
-        "headlines":headlines,
-              
-    }
-    addtoMEIHistory(code, result)
-    set_cache(code, result)
-    return result
 
 @app.get("/stock/history/{code}")
 def stock_mei_history(code:str):
@@ -188,15 +132,51 @@ def stock_mei_historical_trend(code:str):
     }
 
 @app.post('/assistant_chat')
-def assistant_chat(stock: str, query:str):
-    data= stock_mei_historical_trend(stock)
+def assistant_chat(payload:dict):
+    code = payload["stock"]
+    question = payload["question"]
 
-    context=build_market_context(data)
-    response=chat_response(context, query)
+    if not question:
+        return {"reply": "Please ask a question."}
 
-    return{
-        'response':response
+    market_context = build_market_context(code)
+    try:
+        reply = ask_marketlens_ai(market_context, question)
+    except RuntimeError:
+        # fallback explanation
+        reply = (
+            "AI assistant is currently unavailable. "
+            "Based on market data, sentiment is "
+            f"{market_context['emotion']} with "
+            f"{market_context['trend_direction']} trend."
+        )
+
+    return {"reply": reply}
+
+def build_market_context(code: str):
+    snapshot = get_market_snapshot(code)
+    history = snapshot["history"]
+
+    history_summary = []
+    for i, h in enumerate(history[-5:]):
+        history_summary.append(
+            f"- {len(history) - i} points ago: MEI {h['mei']}"
+        )
+
+    mei = snapshot["mei"]
+
+    return {
+        "stock": code,
+        "mei": mei,
+        "emotion": "Fear" if mei < 40 else "Greed" if mei > 60 else "Neutral",
+        "trend_direction": snapshot["trend_analysis"]["direction"],
+        "momentum_value": snapshot["momentum"]["value"],
+        "momentum_strength": snapshot["momentum"]["strength"],
+        "volatility": snapshot["volatility"]["level"],
+        "alert_message": snapshot["alert"]["message"],
+        "history_summary": "\n".join(history_summary),
     }
+
 
 
 

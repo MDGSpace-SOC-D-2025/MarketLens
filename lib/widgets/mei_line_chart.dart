@@ -30,11 +30,11 @@ class MeiLineChart extends StatelessWidget {
       child: LineChart(
         LineChartData(
   minX: 0,
-  maxX: (values.length - 1).toDouble(), // 👈 IMPORTANT
+  maxX: (values.length - 1).toDouble(), // 
   minY: 0,
   maxY: 100,
 
-  clipData: FlClipData.all(), // 👈 IMPORTANT
+  clipData: FlClipData.all(), // 
 
   gridData: FlGridData(
     show: true,

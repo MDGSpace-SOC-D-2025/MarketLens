@@ -11,7 +11,7 @@ class NewsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Market News 📰 📢 🚨"),
+        title: const Text("Market News "),
         centerTitle: true,
       ),
       body: SafeArea(
