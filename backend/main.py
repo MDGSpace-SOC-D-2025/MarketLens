@@ -10,7 +10,7 @@ from assistant_chat import build_market_context, chat_response
 from cache import get_cache, set_cache
 from history import addtoMEIHistory, bootstrap_mei_history, getMEIHistory, AnalyzeHistoricalTrend
 from alerts import generate_alert
-from insights import generate_insight
+from insights import generate_insights
 
 from assistant_chat import build_market_context, chat_response
 
@@ -119,7 +119,12 @@ def stock_mei_historical_trend(code:str):
     latest_mei=history[-1]['mei']
 
     alert=generate_alert(latest_mei, SentimentalTrend['direction'], SentimentalMomentumScore, SentimentalVolatilityIndicator['level'])
-    insight=generate_insight(SentimentalTrend, SentimentalMomentumScore, SentimentalVolatilityIndicator)
+    insights = generate_insights(
+    SentimentalTrend,
+    SentimentalMomentumScore,
+    SentimentalVolatilityIndicator,
+    history
+)
 
     return {
         'code':code,
@@ -128,7 +133,7 @@ def stock_mei_historical_trend(code:str):
         'Momentum Score':SentimentalMomentumScore,
         'Volatility Indicator': SentimentalVolatilityIndicator,
         'Alert': alert,
-        'Insight':insight,
+        'Insight':insights,
     }
 
 @app.post('/assistant_chat')

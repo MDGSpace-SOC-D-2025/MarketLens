@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:marketlens/market_state.dart';
 import 'package:marketlens/pages/assistant_page.dart';

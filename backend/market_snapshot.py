@@ -1,5 +1,5 @@
 from alerts import generate_alert
-from insights import generate_insight
+from insights import generate_insights
 from history import AnalyzeHistoricalTrend, getMEIHistory
 from cache import get_cache
 from stock_service import compute_stock_sentiment
@@ -21,7 +21,13 @@ def get_market_snapshot(code: str):
         volatility["level"],
     )
 
-    insight = generate_insight(trend, momentum, volatility)
+    insights = generate_insights(
+    trend,
+    momentum,
+    volatility,
+    history
+)
+
 
     return {
         "code": code,
@@ -33,5 +39,5 @@ def get_market_snapshot(code: str):
         "momentum": momentum,
         "volatility": volatility,
         "alert": alert,
-        "insight": insight,
+        "insight": insights,
     }

@@ -27,9 +27,8 @@ class MarketState extends ChangeNotifier {
   String alertLevel = "";
   List<dynamic> alertFactors = [];
 
-  String insightTitle = "";
-  String insightMessage = "";
-  String insightType = "";
+  List<dynamic> insights = [];
+
 
   Timer? _timer;
 
@@ -83,15 +82,14 @@ class MarketState extends ChangeNotifier {
       alertLevel = alertMap['level'] ?? '';
       alertFactors = alertMap['factors'] ?? [];
 
-      insightTitle = insightMap['title'] ?? '';
-      insightMessage = insightMap['message'] ?? '';
-      insightType = insightMap['type'] ?? '';
+      insights = trendData['Insight'] ?? [];
 
 
     } catch (e) {
       //error = "Failed to fetch market data";
       error = "Failed to fetch market data";
       debugPrint("FETCH ERROR: $e");
+      
       
     }
 

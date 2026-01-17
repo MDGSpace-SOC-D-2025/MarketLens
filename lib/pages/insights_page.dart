@@ -48,19 +48,26 @@ class InsightsPage extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       /// INSIGHTS SECTION
-                      if (market.insightTitle.isNotEmpty)
-                        InsightsCard(
-                          insightTitle: market.insightTitle,
-                          insightMessage: market.insightMessage,
-                          insightType: market.insightType,
-                        )
-                      else
-                        const Center(
-                          child: Text(
-                            "No insights available",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
+                      if (market.insights.isNotEmpty)
+  ...market.insights.map((insight) {
+  return InsightsCard(
+    insightTitle: insight['title'],
+    insightMessage: insight['message'],
+    insightType: insight['type'],
+    severity: insight['severity'],
+    metrics: insight['metrics'],
+  );
+}).toList()
+
+else
+  const Center(
+    child: Text(
+      "No insights available",
+      style: TextStyle(color: Colors.grey),
+    ),
+  )
+
+                  
                     ],
                   ),
       ),
