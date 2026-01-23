@@ -3,51 +3,32 @@ import os
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
-def fetch_headlines(query: str, limit: int = 5):
-    if not NEWS_API_KEY:
-        return ["News API key not configured"]
-
-    url = "https://newsapi.org/v2/everything"
-    params = {
-        "q": query,
-        "language": "en",
-        "sortBy": "publishedAt",
-        "pageSize": limit,
-        "apiKey": NEWS_API_KEY,
-    }
-
-    try:
-        response = requests.get(url, params=params, timeout=5)
-        data = response.json()
-
-        articles = data.get("articles", [])
-        headlines = [a["title"] for a in articles if a.get("title")]
-
-        return headlines or ["No major market news found"]
-
-    except Exception as e:
-        return ["Failed to fetch news"]
-    
 
 
 from difflib import SequenceMatcher
 
-def normalize(text):
+def normalize(text: str):
     return text.lower().strip()
 
-def is_similar(a, b, threshold=0.8):
+
+def is_similar(a: str, b: str, threshold=0.8):
     return SequenceMatcher(None, a, b).ratio() >= threshold
 
-def deduplicate_headlines_fuzzy(headlines):
+
+def deduplicate_headlines_fuzzy(articles):
     unique = []
-    seen_normalized = []
+    seen_titles = []
 
-    for h in headlines:
-        norm = normalize(h)
+    for article in articles:
+        title = article.get("title", "")
+        if not title:
+            continue
 
-        if not any(is_similar(norm, s) for s in seen_normalized):
-            seen_normalized.append(norm)
-            unique.append(h)
+        norm = normalize(title)
+
+        if not any(is_similar(norm, s) for s in seen_titles):
+            seen_titles.append(norm)
+            unique.append(article)
 
     return unique
 
@@ -85,29 +66,69 @@ def relevance_score(headline):
 
     return score
 
-def filter_relevant_headlines(headlines, min_score=1):
-    scored = [
-        (h, relevance_score(h))
-        for h in headlines
-    ]
+def fetch_headlines(query: str, limit: int = 100):
+    if not NEWS_API_KEY:
+        return []
 
-    filtered = [
-        h for h, score in scored
-        if score >= min_score
-    ]
+    url = "https://newsapi.org/v2/everything"
+    params = {
+        "q": query,
+        "language": "en",
+        "sortBy": "publishedAt",
+        "pageSize": limit,
+        "apiKey": NEWS_API_KEY,
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        data = response.json()
+
+        articles = data.get("articles", [])
+
+        structured = []
+        for a in articles:
+            if not a.get("title"):
+                continue
+
+            structured.append({
+                "title": a["title"],
+                "source": a["source"]["name"] if a.get("source") else "Unknown",
+                "author": a.get("author"),
+                "url": a.get("url"),
+                "published_at": a.get("publishedAt"),
+                "description": a.get("description"),
+            })
+
+        return structured
+
+    except Exception:
+        return []
+
+def filter_relevant_headlines(articles, min_score=1):
+    filtered = []
+
+    for article in articles:
+        title = article.get("title", "")
+        if not title:
+            continue
+
+        score = relevance_score(title)
+        if score >= min_score:
+            filtered.append(article)
 
     return filtered
 
-def weighted_sentiment(headlines, analyzer):
+
+def weighted_sentiment(articles, analyzer):
     total_weighted = 0
     total_weight = 0
 
-    for h in headlines:
-        sentiment = analyzer.polarity_scores(h)["compound"]
-        weight = relevance_score(h)
+    for a in articles:
+        title = a["title"]
+        sentiment = analyzer.polarity_scores(title)["compound"]
+        weight = relevance_score(title)
 
-        
-        if weight <= 0:     # ignore weak or noisy headlines
+        if weight <= 0:
             continue
 
         total_weighted += sentiment * weight
@@ -117,5 +138,6 @@ def weighted_sentiment(headlines, analyzer):
         return 0.0
 
     return total_weighted / total_weight
+
 
 

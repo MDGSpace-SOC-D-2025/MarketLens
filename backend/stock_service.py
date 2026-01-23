@@ -26,7 +26,7 @@ def compute_stock_sentiment(code: str):
             "code": code,
             "mei": 50,
             "trend": "Uncertain",
-            "headlines": ["No major market news found"],
+            "headlines": [],
         }
         set_cache(code, result)
         return result
