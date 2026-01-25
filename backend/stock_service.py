@@ -15,7 +15,12 @@ def compute_stock_sentiment(code: str):
 
     cached = get_cache(code)
     if cached:
+        # migrate old cache shape
+        if "news" not in cached and "headlines" in cached:
+            cached["news"] = cached["headlines"]
+        cached.setdefault("news", [])
         return cached
+
 
     raw_headlines = fetch_headlines(code)
     deduped = deduplicate_headlines_fuzzy(raw_headlines)
@@ -26,7 +31,7 @@ def compute_stock_sentiment(code: str):
             "code": code,
             "mei": 50,
             "trend": "Uncertain",
-            "headlines": [],
+            "news": [],
         }
         set_cache(code, result)
         return result
@@ -49,7 +54,7 @@ def compute_stock_sentiment(code: str):
         "code": code,
         "mei": mei,
         "trend": trend,
-        "headlines": headlines,
+        "news": headlines,
     }
 
     addtoMEIHistory(code, result)

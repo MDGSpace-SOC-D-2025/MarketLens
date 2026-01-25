@@ -33,7 +33,7 @@ def get_market_snapshot(code: str):
         "code": code,
         "mei": latest["mei"],
         "trend": latest["trend"],
-        "headlines": latest["headlines"],
+        "news": latest["news"],
         "history": history,
         "trend_analysis": trend,
         "momentum": momentum,

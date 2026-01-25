@@ -4,6 +4,8 @@ from data_sources.news_service import fetch_headlines, deduplicate_headlines_fuz
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from fastapi import FastAPI
 
+from article_fetcher import fetch_article_text
+
 from assistant_ai import ask_marketlens_ai, build_prompt
 from assistant_chat import build_market_context, chat_response
 
@@ -161,6 +163,18 @@ def assistant_chat(payload:dict):
 def build_market_context(code: str):
     snapshot = get_market_snapshot(code)
     history = snapshot["history"]
+    news = snapshot.get("news", [])
+    expanded_articles = []
+
+    for a in news[:2]:  # STRICT LIMIT
+        if a.get("url"):
+            content = fetch_article_text(a["url"])
+            if content:
+                expanded_articles.append({
+                    "title": a["title"],
+                    "source": a.get("source", "Unknown"),
+                    "content": content[:1200]  # keep prompt tight
+                })
 
     history_summary = []
     for i, h in enumerate(history[-5:]):
@@ -168,7 +182,16 @@ def build_market_context(code: str):
             f"- {len(history) - i} points ago: MEI {h['mei']}"
         )
 
+    news_context = []
+    for a in news[:3]:  # limit context
+        news_context.append(
+            f"- {a['title']} (Source: {a.get('source', 'Unknown')})"
+        )
+
     mei = snapshot["mei"]
+
+    
+
 
     return {
         "stock": code,
@@ -180,7 +203,10 @@ def build_market_context(code: str):
         "volatility": snapshot["volatility"]["level"],
         "alert_message": snapshot["alert"]["message"],
         "history_summary": "\n".join(history_summary),
+        "news_context": "\n".join(news_context),
+        "expanded_articles":expanded_articles
     }
+
 
 
 

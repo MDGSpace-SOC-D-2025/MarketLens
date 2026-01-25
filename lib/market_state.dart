@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../mei_service.dart';
+import 'package:marketlens/widgets/news_article.dart';
+
 
 class MarketState extends ChangeNotifier {
   final MEIService meiService = MEIService();
@@ -15,7 +17,7 @@ class MarketState extends ChangeNotifier {
   String trend = "--";
   List<int> meiHistory = [];
 
-  List<dynamic> headlines = [];
+  List<NewsArticle> news = [];
 
   String trendDirection = "Unknown";
   int momentumScore = 0;
@@ -60,7 +62,7 @@ class MarketState extends ChangeNotifier {
 
       meiValue = stockData.value;
       trend = stockData.trend;
-      headlines = stockData.headlines;
+      news = stockData.news;
 
       meiHistory = history;
 

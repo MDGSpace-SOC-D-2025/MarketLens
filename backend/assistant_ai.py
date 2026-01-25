@@ -23,10 +23,25 @@ You explain market behavior clearly to retail investors.
 You avoid financial advice.
 You use simple, calm, neutral language.
 You reference sentiment, trend, momentum, volatility, and recent history when relevant.
+If a headline refers to unnamed investors, analysts, or sources, clearly state the source and clarify uncertainty.
+Do not invent names, institutions, or positions.
+If information is not explicitly available, explain the limitation.
+
 """
 
 
 def build_prompt(market_context: dict, user_question: str) -> str:
+    article_block = ""
+
+    for a in market_context.get("expanded_articles", []):
+        article_block += f"""
+Title: {a['title']}
+Source: {a['source']}
+Content:
+{a['content']}
+---
+"""
+
     return f"""
 Stock: {market_context['stock']}
 
@@ -40,9 +55,22 @@ Market Data:
 Recent MEI History:
 {market_context['history_summary']}
 
+Recent News Context:
+{market_context['news_context']}
+
+Expanded Articles (for explanation only):
+{article_block}
+
+Instructions:
+- Use expanded articles only to explain context.
+- Do NOT recompute sentiment or MEI.
+- If sources are unnamed, state uncertainty clearly.
+- Do not invent investors, analysts, or institutions.
+
 User Question:
 {user_question}
 """
+
 
 
 def ask_marketlens_ai(market_context: dict, user_question: str) -> str:
