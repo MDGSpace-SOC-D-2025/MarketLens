@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:marketlens/pages/bot_ask_anything.dart';
 import 'package:marketlens/widgets/news_article.dart';
 import 'package:provider/provider.dart';
 import 'package:marketlens/market_state.dart';
+
+import 'package:url_launcher/url_launcher.dart';
+
 
 class NewsPage extends StatelessWidget {
   const NewsPage({super.key});
@@ -90,10 +94,15 @@ class NewsPage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.open_in_browser),
               title: const Text("Read full article"),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                // TODO: launchUrl(article.url)
+                debugPrint("OPENING URL: ${article.url}");
+                final uri = Uri.parse(article.url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               },
+
             ),
             ListTile(
               leading: const Icon(Icons.smart_toy_outlined),
@@ -101,12 +110,17 @@ class NewsPage extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 // Navigate to assistant with prefilled question
-                Navigator.pushNamed(
-                  context,
-                  "/assistant",
-                  arguments:
-                      "Explain this news and its market impact:\n${article.title}",
-                );
+                Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => ChatAssistantPage(
+      stockCode: context.read<MarketState>().stockCode,
+      initialQuestion:
+          "Explain this news and its market impact:\n${article.title}",
+    ),
+  ),
+);
+
               },
             ),
           ],

@@ -3,7 +3,8 @@ import 'package:marketlens/mei_service.dart';
 
 class ChatAssistantPage extends StatefulWidget {
   final String stockCode;
-  const ChatAssistantPage({super.key, required this.stockCode});
+  final String? initialQuestion;
+  const ChatAssistantPage({super.key, required this.stockCode, this.initialQuestion});
 
   @override
   State<ChatAssistantPage> createState() => _ChatAssistantPageState();
@@ -20,6 +21,9 @@ class _ChatAssistantPageState extends State<ChatAssistantPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialQuestion != null) {
+    _controller.text = widget.initialQuestion!;
+    }
 
     // Initial greeting from bot
     messages.add(
