@@ -16,38 +16,38 @@ clear, explainable market intelligence.
 
 ### Core Features
 
-- 📈 **Market Emotion Index (MEI)**
+-  **Market Emotion Index (MEI)**
   - A normalized 0–100 sentiment index derived from:
     - weighted news sentiment
     - historical price movement
   - Designed for interpretability, not prediction
 
-- 📰 **Smart News Analysis**
+-  **Smart News Analysis**
   - Fetches market-relevant headlines
   - Deduplicates similar news using fuzzy matching
   - Filters low-signal headlines
   - Assigns relevance-weighted sentiment scores
 
-- 🧠 **Historical Trend Analysis**
+-  **Historical Trend Analysis**
   - Tracks MEI over time
   - Computes:
     - sentiment trend (rising / falling / flat)
     - momentum strength
     - volatility level
 
-- 🚨 **Alert System**
+-  **Alert System**
   - Generates alerts based on:
     - extreme sentiment
     - momentum shifts
     - volatility spikes
   - Displays factors contributing to alerts
 
-- 🤖 **AI Market Assistant**
+-  **AI Market Assistant**
   - Uses contextual market data
   - Explains trends in plain language
   - Explicitly avoids financial advice
 
-- 📱 **Flutter Frontend**
+-  **Flutter Frontend**
   - Live MEI gauge
   - Trend charts and sparklines
   - News cards with AI follow-up
@@ -142,7 +142,8 @@ export OPENAI_API_KEY=your_key_here
 
 ### Screenshots
 
-- MEI Gauge
+- MEI Gauge ![7bdd04f3-54e2-42ba-ab73-8bf011b6a58d](https://github.com/user-attachments/assets/c171da3e-1228-42bb-9800-91b3a75beecd)
+
 - Trend Chart
 - News Page
 - Insights Page
