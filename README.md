@@ -113,6 +113,7 @@ flutter pub get
   - read the full article
   - ask the AI assistant about its impact
 - View alerts and system-generated insights
+```
 
 ## Configuration / Environment Variables
 
@@ -135,7 +136,7 @@ export OPENAI_API_KEY=your_key_here
 
 ##  Screenshots / Demo
 
-```markdown
+
 ### Screenshots
 
 - MEI Gauge
@@ -165,6 +166,14 @@ marketlens/
 │
 └── README.md
 
+## Known Issues / Limitations
+
+- MEI history is stored in memory (resets on server restart)
+- News availability depends on NewsAPI limits
+- AI assistant responses depend on external API availability
+- Price-based MEI is sensitive to low-liquidity data
+- This project does NOT provide financial advice
+
 ## Roadmap
 ### Planned Improvements
 
@@ -174,13 +183,7 @@ marketlens/
 - Rate-limit handling and retry logic
 - Dark/light theme toggle
 
-## Known Issues / Limitations
 
-- MEI history is stored in memory (resets on server restart)
-- News availability depends on NewsAPI limits
-- AI assistant responses depend on external API availability
-- Price-based MEI is sensitive to low-liquidity data
-- This project does NOT provide financial advice
 
 
 
