@@ -53,6 +53,8 @@ clear, explainable market intelligence.
   - News cards with AI follow-up
   - Clean, reactive UI
 
+## Tech Stack
+
 ### Frontend
 - Flutter (Dart)
 - Provider + ChangeNotifier (State Management)
@@ -74,9 +76,8 @@ clear, explainable market intelligence.
 - In-memory caching with TTL
 - Modular service-based backend
 
-## Tech Stack
 
-### Backend Setup
+## Backend Setup
 
 1. Clone the repository
 2. Create a virtual environment
@@ -89,7 +90,7 @@ pip install -r requirements.txt
 
 uvicorn main:app --reload
 
-### Frontend Setup
+## Frontend Setup
 1. Navigate to the Flutter project
 2. Install dependencies
 ```bash
