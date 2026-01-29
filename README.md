@@ -142,12 +142,20 @@ export OPENAI_API_KEY=your_key_here
 
 ### Screenshots
 
-- MEI Gauge ![7bdd04f3-54e2-42ba-ab73-8bf011b6a58d](https://github.com/user-attachments/assets/c171da3e-1228-42bb-9800-91b3a75beecd)
+- MEI Gauge + Trend Chart
+- ![7bdd04f3-54e2-42ba-ab73-8bf011b6a58d](https://github.com/user-attachments/assets/c171da3e-1228-42bb-9800-91b3a75beecd)
 
-- Trend Chart
 - News Page
+- ![6154ea9f-c742-4525-a264-002ed585c34e](https://github.com/user-attachments/assets/947cf8cf-d9a8-4b3d-bddd-193e166730b3) ![7977345e-c8de-4dbc-a4a1-7ca0a9097baf](https://github.com/user-attachments/assets/c5e4ec86-b36d-4ade-be80-048bfb314dd4)
+
+
 - Insights Page
-- AI Assistant Response
+- ![f08d38df-b1f9-4b44-a733-aff137845fc4](https://github.com/user-attachments/assets/d929dd33-5337-40ea-81dc-0e23a22ce6b7) ![2bf706e2-f491-4f17-a78d-d3f583afaf3f](https://github.com/user-attachments/assets/7116e393-3ad5-46bc-ab01-a5aa6aeacfee)
+
+
+- AI Assistant Response ![57644e8a-e5d8-49c8-8fdd-af51deaa5a37](https://github.com/user-attachments/assets/e237e59e-de12-4c92-a30f-3ffe9cee8912) ![2958111a-a207-4d3e-977a-43e6a77e5fd9](https://github.com/user-attachments/assets/efc0495c-9e75-48d3-b763-b0d456264b0e)
+
+
 
 ---
 ## Project Structure
