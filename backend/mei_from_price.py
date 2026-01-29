@@ -29,6 +29,6 @@ def compute_mei_from_prices(prices, window=20):
         return 0.0
 
     # Step 4: normalize & bound
-    mei = np.tanh(latest_return / volatility) * 100
+    mei = ((np.tanh(latest_return / volatility))+1)*50
 
     return round(float(mei), 2)

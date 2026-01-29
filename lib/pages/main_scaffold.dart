@@ -3,7 +3,7 @@ import 'package:marketlens/pages/assistant_page.dart';
 import 'home_page.dart';
 import 'insights_page.dart';
 import 'news_page.dart';
-//import 'assistant_page.dart';
+
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -13,7 +13,7 @@ class MainScaffold extends StatefulWidget {
 }
 
 class _MainScaffoldState extends State<MainScaffold> {
-  int _currentIndex = 0;
+  int _currentIndex = 0;  //tracks which tab is active
 
   final pages = const [
     HomePage(),
@@ -29,7 +29,11 @@ class _MainScaffoldState extends State<MainScaffold> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
-        type: BottomNavigationBarType.fixed,
+        type: BottomNavigationBarType.fixed,  //All items:
+        //Have equal width
+        //Are always visible
+      //Labels are always shown
+      //No shifting animation
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),

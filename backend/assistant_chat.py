@@ -1,3 +1,4 @@
+'''
 def build_market_context(data):
     return f"""
     Market Snapshot:
@@ -19,3 +20,4 @@ def chat_response(context, user_query):
     Interpretation:
     The market conditions suggest cautious optimism with momentum-driven movement.
     """
+'''

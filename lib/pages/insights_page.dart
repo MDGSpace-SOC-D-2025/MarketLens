@@ -47,17 +47,19 @@ class InsightsPage extends StatelessWidget {
 
                       const SizedBox(height: 16),
 
-                      /// INSIGHTS SECTION
-                      if (market.insights.isNotEmpty)
-  ...market.insights.map((insight) {
-  return InsightsCard(
+                      /// INSIGHTS SECTION 
+                      /// /If there are insights, convert each insight into an InsightsCard widget and insert all of them into the widget list
+                      /// With ..., Flutter sees: children: [InsightsCard(),InsightsCard(),]
+                      if (market.insights.isNotEmpty)   
+  ...market.insights.map((insight) {   //insights is a list of map(insight); A map from backend json
+  return InsightsCard(                 //.map iterates over the list, converts each to insight card
     insightTitle: insight['title'],
     insightMessage: insight['message'],
     insightType: insight['type'],
     severity: insight['severity'],
     metrics: insight['metrics'],
   );
-}).toList()
+}).toList()  //Flutter children needs a List<Widget>
 
 else
   const Center(

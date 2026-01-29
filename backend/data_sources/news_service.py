@@ -24,7 +24,7 @@ def deduplicate_headlines_fuzzy(articles):
         if not title:
             continue
 
-        norm = normalize(title)
+        norm = normalize(title)  #error
 
         if not any(is_similar(norm, s) for s in seen_titles):
             seen_titles.append(norm)

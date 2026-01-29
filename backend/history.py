@@ -116,9 +116,8 @@ class AnalyzeHistoricalTrend:
 
 import yfinance as yf
 
-
 def fetch_yahoo_history(code: str):
-    ticker = yf.Ticker(code)
+    ticker = yf.Ticker(code)      #Bind this Python object to this stock symbol
 
     df = ticker.history(period="1d", interval="1h")
 
@@ -128,7 +127,8 @@ def fetch_yahoo_history(code: str):
     history = []
     for ts, row in df.iterrows():
         history.append({
-            "timestamp": ts.to_pydatetime(),
+            "timestamp": ts.to_pydatetime(),  #ts=2024-01-26 10:37:00
+                                                #datetime(2024, 1, 26, 10, 37),
             "price": float(row["Close"])
         })
 
@@ -150,11 +150,18 @@ def bootstrap_mei_history(code: str):
     for entry in raw:
         bucket = entry["timestamp"].replace(
             minute=0, second=0, microsecond=0
-        )
-        bucket -= timedelta(hours=bucket.hour % 2)
+        ) 
+        bucket -= timedelta(hours=bucket.hour % 2)   #epresents a duration or difference between two dates or time
         buckets.setdefault(bucket, []).append(entry["price"])
+        '''
+        {
+  datetime(2024,1,26,10,0): [182.3, 182.7, 183.1],
+  datetime(2024,1,26,12,0): [181.9, 181.4],
+}
 
-    for ts in sorted(buckets.keys()):
+        '''
+
+    for ts in sorted(buckets.keys()): #time ordered
         prices = buckets[ts]
         if len(prices) < 2:
             continue

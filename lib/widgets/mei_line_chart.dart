@@ -51,11 +51,12 @@ class MeiLineChart extends StatelessWidget {
 
           gridData: FlGridData(
             show: true,
-            horizontalInterval: 20,
+            horizontalInterval: 20, //horizontal grid lines
           ),
 
           borderData: FlBorderData(show: false),
 
+          //This controls all 4 sides
           titlesData: FlTitlesData(
             topTitles: AxisTitles(
               sideTitles: SideTitles(showTitles: false),

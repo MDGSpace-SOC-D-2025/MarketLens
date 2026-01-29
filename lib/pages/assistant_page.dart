@@ -16,7 +16,7 @@ class AssistantPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [            
-            // HERO BOT CARD
+            //
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(

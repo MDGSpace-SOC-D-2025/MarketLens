@@ -35,41 +35,41 @@ def build_prompt(market_context: dict, user_question: str) -> str:
 
     for a in market_context.get("expanded_articles", []):
         article_block += f"""
-Title: {a['title']}
-Source: {a['source']}
-Content:
-{a['content']}
----
-"""
+        Title: {a['title']}
+        Source: {a['source']}
+        Content:
+        {a['content']}
+        ---
+        """
 
     return f"""
-Stock: {market_context['stock']}
+    Stock: {market_context['stock']}
 
-Market Data:
-- MEI: {market_context['mei']} ({market_context['emotion']})
-- Trend: {market_context['trend_direction']}
-- Momentum: {market_context['momentum_value']} ({market_context['momentum_strength']})
-- Volatility: {market_context['volatility']}
-- Alert: {market_context['alert_message']}
+    Market Data:
+    - MEI: {market_context['mei']} ({market_context['emotion']})
+    - Trend: {market_context['trend_direction']}
+    - Momentum: {market_context['momentum_value']} ({market_context['momentum_strength']})
+    - Volatility: {market_context['volatility']}
+    - Alert: {market_context['alert_message']}
 
-Recent MEI History:
-{market_context['history_summary']}
+    Recent MEI History:
+    {market_context['history_summary']}
 
-Recent News Context:
-{market_context['news_context']}
+    Recent News Context:
+    {market_context['news_context']}
 
-Expanded Articles (for explanation only):
-{article_block}
+    Expanded Articles (for explanation only):
+    {article_block}
 
-Instructions:
-- Use expanded articles only to explain context.
-- Do NOT recompute sentiment or MEI.
-- If sources are unnamed, state uncertainty clearly.
-- Do not invent investors, analysts, or institutions.
+    Instructions:
+    - Use expanded articles only to explain context.
+    - Do NOT recompute sentiment or MEI.
+    - If sources are unnamed, state uncertainty clearly.
+    - Do not invent investors, analysts, or institutions.
 
-User Question:
-{user_question}
-"""
+    User Question:
+    {user_question}
+    """
 
 
 

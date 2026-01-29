@@ -63,14 +63,14 @@ class NewsPage extends StatelessWidget {
           Text(
             article.description!,
             maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            overflow: TextOverflow.ellipsis,  //This controls what happens when text exceeds maxLines. ellipsis means: Add ... at the end of the last visible line
             style: const TextStyle(fontSize: 13),
           ),
         ]
       ],
     ),
     onTap: () {
-      _showNewsActions(context, article);
+      _showNewsActions(context, article);  //Instead of: Immediately opening link You give the user a choice: Read Ask AI
     },
   );
 }
@@ -82,24 +82,24 @@ class NewsPage extends StatelessWidget {
 
   void _showNewsActions(BuildContext context, NewsArticle article) {
   showModalBottomSheet(
-    context: context,
+    context: context, //same context from NewsPage,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (_) {
       return SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,  //take suff ht only
           children: [
             ListTile(
               leading: const Icon(Icons.open_in_browser),
               title: const Text("Read full article"),
               onTap: () async {
-                Navigator.pop(context);
+                Navigator.pop(context);  //The modal bottom sheet itself Close the current UI layer before navigating away
                 debugPrint("OPENING URL: ${article.url}");
-                final uri = Uri.parse(article.url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                final uri = Uri.parse(article.url); // Convert String to uri
+                if (await canLaunchUrl(uri)) {  //Asks the OS that Is there any app on this device that can open this URI?
+                  await launchUrl(uri, mode: LaunchMode.externalApplication); //Hands control to the operating system and app goes to bg
                 }
               },
 
@@ -108,9 +108,9 @@ class NewsPage extends StatelessWidget {
               leading: const Icon(Icons.smart_toy_outlined),
               title: const Text("Ask AI about this news"),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context); //The modal bottom sheet
                 // Navigate to assistant with prefilled question
-                Navigator.push(
+                Navigator.push(  //Pushes a new route onto the navigation stack, Opens a full-screen page
   context,
   MaterialPageRoute(
     builder: (_) => ChatAssistantPage(

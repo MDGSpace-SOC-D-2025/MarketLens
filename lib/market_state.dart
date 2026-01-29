@@ -49,7 +49,7 @@ class MarketState extends ChangeNotifier {
   }
 
   Future<void> fetchAll() async {
-    if (isLoading) return;
+    if (isLoading) return; //prevents overlapping request
 
     isLoading = true;
     error = null;

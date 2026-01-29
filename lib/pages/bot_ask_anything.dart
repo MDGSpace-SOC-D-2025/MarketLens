@@ -35,11 +35,11 @@ class _ChatAssistantPageState extends State<ChatAssistantPage> {
       ),
     );
   }
-
+//4
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
-    setState(() {
+    setState(() { 
       messages.add(
         _ChatMessage(role: ChatRole.user, content: text),
       );
@@ -73,10 +73,11 @@ class _ChatAssistantPageState extends State<ChatAssistantPage> {
     setState(() => isLoading = false);
     _scrollToBottom();
   }
-
+//3
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
+    WidgetsBinding.instance.addPostFrameCallback((_) { //Wait until the ListView knows its new height, THEN scroll
+    //Scroll happens after message is rendered
+      if (_scrollController.hasClients) { //a scrollable widget like list view is attached
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
@@ -85,6 +86,14 @@ class _ChatAssistantPageState extends State<ChatAssistantPage> {
       }
     });
   }
+
+  /* Called:
+
+After user sends a message
+
+After assistant replies
+
+So every new message -> auto scroll*/
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +152,14 @@ class _ChatAssistantPageState extends State<ChatAssistantPage> {
 }
 
 enum ChatRole { user, assistant }
-
+//1
 class _ChatMessage {
   final ChatRole role;
   final String content;
 
   _ChatMessage({required this.role, required this.content});
 }
-
+//2
 class _ChatBubble extends StatelessWidget {
   final _ChatMessage message;
 
@@ -170,7 +179,7 @@ class _ChatBubble extends StatelessWidget {
         decoration: BoxDecoration(
           color: isUser
               ? Colors.blueAccent
-              : Colors.grey.withOpacity(0.15),
+              : Colors.grey.withAlpha(30),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Text(

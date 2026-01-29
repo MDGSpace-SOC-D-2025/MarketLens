@@ -86,7 +86,7 @@ class InsightsCard extends StatelessWidget {
                 children: metrics!.entries.map((entry) {
                   return Chip(
                     label: Text(
-                      "${entry.key}: ${entry.value}",
+                      "${entry.key}: ${entry.value}",  //momentum:strong
                       style: const TextStyle(fontSize: 12),
                     ),
                     backgroundColor:

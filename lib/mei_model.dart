@@ -1,7 +1,7 @@
 //MEIDATA
 import 'package:marketlens/widgets/news_article.dart';
 
-class MEIData {
+/*class MEIData {
   final int value;
   final String trend;
 
@@ -13,7 +13,7 @@ class MEIData {
     
   }
 
-}
+}*/
 
 //STOCK SPECIFIC MEI DATA
 
@@ -21,7 +21,7 @@ class StockMEIData {
   final String code;
   final int value;
   final String trend;
-  //final List<String> headlines;
+  
   final List<NewsArticle> news;
   StockMEIData({
     required this.code,
@@ -29,6 +29,22 @@ class StockMEIData {
     required this.trend,
     required this.news,
   });
+
+  /* backend sends json data like this:
+  {
+  "code": "",
+  "mei": ,
+  "trend": "",
+  "news": [
+    {
+      "title": "Apple rallies on earnings",
+      "source": "Reuters",
+      "url": "https://..."
+    }
+  ]
+}
+
+  */
 
   factory StockMEIData.fromJson(Map<String, dynamic> json) {
     return StockMEIData(

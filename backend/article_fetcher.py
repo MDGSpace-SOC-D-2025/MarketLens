@@ -16,7 +16,7 @@ def fetch_article_text(url: str, max_chars: int = 4000):
         # remove scripts & junk
         for tag in soup(["script", "style", "noscript"]):
             tag.decompose()
-
+        #Articles are usually inside <p> tags, find_all("p") finds paragraph; .get_text(removing HTML markup (tags and attributes)
         paragraphs = [p.get_text() for p in soup.find_all("p")]
         text = "\n".join(paragraphs)
         
