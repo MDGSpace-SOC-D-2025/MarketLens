@@ -74,6 +74,8 @@ clear, explainable market intelligence.
 - In-memory caching with TTL
 - Modular service-based backend
 
+## Tech Stack
+
 ### Backend Setup
 
 1. Clone the repository
