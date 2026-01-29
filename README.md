@@ -52,7 +52,7 @@ clear, explainable market intelligence.
   - Trend charts and sparklines
   - News cards with AI follow-up
   - Clean, reactive UI
-
+---
 ## Tech Stack
 
 ### Frontend
@@ -148,6 +148,7 @@ export OPENAI_API_KEY=your_key_here
 - Insights Page
 - AI Assistant Response
 
+---
 ## Project Structure
 ```markdown
 marketlens/
