@@ -146,6 +146,7 @@ export OPENAI_API_KEY=your_key_here
 - AI Assistant Response
 
 ## Project Structure
+```markdown
 marketlens/
 │
 ├── frontend/
@@ -165,7 +166,7 @@ marketlens/
 │   └── insights.py
 │
 └── README.md
-
+```
 ## Known Issues / Limitations
 
 - MEI history is stored in memory (resets on server restart)
